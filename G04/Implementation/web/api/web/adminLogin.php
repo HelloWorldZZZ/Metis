@@ -1,5 +1,5 @@
 ﻿<?php
-	include_once("config.php");
+	include_once("../config.php");
 	$c=new mysqli();
 	
 	$username=@$_POST["username"];
