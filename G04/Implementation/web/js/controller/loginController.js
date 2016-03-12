@@ -1,7 +1,7 @@
 $("button#login").click(function() {
   var username = $("input#userId").val();
   var password = $("input#password").val();
-  $.post("api/adminLogin.php", {
+  $.post("api/web/adminLogin.php", {
       username: username,
       password: password
     },
