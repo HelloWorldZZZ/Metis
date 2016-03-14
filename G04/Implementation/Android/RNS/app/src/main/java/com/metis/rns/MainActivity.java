@@ -9,14 +9,27 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.LinearLayout;
 
 
 public class MainActivity extends ActionBarActivity {
+
+    private NavigationView mNavigationView;
+    private LinearLayout mLoginView, mInfoView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_main);
+        initNavigationView();
+        switchView(false);
+    }
+
+    private void initNavigationView() {
+        mLoginView = (LinearLayout) findViewById(R.id.page_login);
+        mInfoView = (LinearLayout) findViewById(R.id.page_info);
         //设置ToolBar
         final Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitleTextColor(Color.WHITE);
@@ -30,13 +43,12 @@ public class MainActivity extends ActionBarActivity {
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
         //设置导航栏NavigationView的点击事件
-        NavigationView mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
+        mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
         mNavigationView.inflateMenu(R.menu.menu_pro);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId())
-                {
+                switch (menuItem.getItemId()) {
                     case R.id.item_one:
                         //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentOne()).commit();
                         mToolbar.setTitle("我的动态");
@@ -55,6 +67,33 @@ public class MainActivity extends ActionBarActivity {
                 return true;
             }
         });
+    }
+
+    private void initInfoView() {
+        mNavigationView.setVisibility(View.VISIBLE);
+        mLoginView.setVisibility(View.GONE);
+        mInfoView.setVisibility(View.VISIBLE);
+    }
+
+    private void initLoginView() {
+        mNavigationView.setVisibility(View.GONE);
+        mLoginView.setVisibility(View.VISIBLE);
+        mInfoView.setVisibility(View.GONE);
+        Button btnLogin = (Button) mLoginView.findViewById(R.id.login);
+        btnLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                switchView(true);
+            }
+        });
+    }
+
+    private void switchView(boolean isLogin) {
+        if(isLogin) {
+            initInfoView();
+        } else {
+            initLoginView();
+        }
     }
 }
 

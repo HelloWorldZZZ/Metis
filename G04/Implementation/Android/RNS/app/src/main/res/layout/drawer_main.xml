@@ -17,10 +17,8 @@
             android:layout_height="?attr/actionBarSize"
             android:background="@color/actionbar_color"/>
         <!--内容显示布局-->
-        <FrameLayout
-            android:id="@+id/frame_content"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+        <include layout="@layout/page_login" />
+        <include layout="@layout/page_info" />
     </LinearLayout>
 
     <!-- The navigation drawer -->
