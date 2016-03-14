@@ -13,13 +13,16 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metis.rns.utils.Utils;
@@ -34,6 +37,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -46,10 +51,13 @@ public class MainActivity extends ActionBarActivity {
     private NavigationView mNavigationView;
     private LinearLayout mLoginView, mInfoView;
     private ProgressDialog mLoginProgressDialog;
-    final int IDENTITY_PROFESSOR = 1;
-    final int IDENTITY_ADMIN = 2;
-    final String LOGIN_SUCCESS = "1";
-    final String LOGIN_FAIL = "0";
+    private DrawerLayout mDrawerLayout;
+    private JSONObject mInfoJson;
+    private int mRole;
+    final int IDENTITY_EXPERT = 2;
+    final int IDENTITY_ADMIN = 1;
+    final int LOGIN_SUCCESS = 1;
+    final int LOGIN_FAIL = 0;
     ArrayList loginParams;
 
     private Thread loginThread = new Thread(new Runnable() {
@@ -60,20 +68,6 @@ public class MainActivity extends ActionBarActivity {
             Looper.loop();
         }
     });
-
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            super.handleMessage(msg);
-            Bundle data = msg.getData();
-            String result = data.getString("result");
-            if (result.equals(LOGIN_SUCCESS)) {
-                switchView(true);
-            } else if (result.equals(LOGIN_FAIL)) {
-                Toast.makeText(mContext, "用户名或密码错误", Toast.LENGTH_SHORT).show();
-            }
-        }
-    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,7 +89,7 @@ public class MainActivity extends ActionBarActivity {
         setSupportActionBar(mToolbar);
 
         //设置抽屉DrawerLayout
-        final DrawerLayout mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
                 R.string.drawer_open, R.string.drawer_close);
         mDrawerToggle.syncState();//初始化状态
@@ -103,7 +97,6 @@ public class MainActivity extends ActionBarActivity {
 
         //设置导航栏NavigationView的点击事件
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.inflateMenu(R.menu.menu_pro);
         mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem menuItem) {
@@ -132,6 +125,27 @@ public class MainActivity extends ActionBarActivity {
         mNavigationView.setVisibility(View.VISIBLE);
         mLoginView.setVisibility(View.GONE);
         mInfoView.setVisibility(View.VISIBLE);
+        mDrawerLayout.openDrawer(Gravity.LEFT);
+        try {
+            TextView tvUserName = (TextView) findViewById(R.id.user_info_txt);
+            ImageView ivPersonImg = (ImageView) findViewById(R.id.drawer_header_person_img);
+            if (mRole == IDENTITY_ADMIN) {
+                String adminName = mInfoJson.getString("admin_account_name");
+                tvUserName.setText(adminName);
+                ivPersonImg.setImageResource(R.mipmap.admin);
+                mNavigationView.inflateMenu(R.menu.menu_admin);
+            } else if (mRole == IDENTITY_EXPERT) {
+                String expertName = mInfoJson.getString("expert_name");
+                String class_no = mInfoJson.getString("test_class_no");
+                String subject = mInfoJson.getString("test_subject_name");
+                String type = mInfoJson.getString("type_name");
+                tvUserName.setText(expertName);
+                ivPersonImg.setImageResource(R.mipmap.professor);
+                mNavigationView.inflateMenu(R.menu.menu_pro);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void initLoginView() {
@@ -141,7 +155,18 @@ public class MainActivity extends ActionBarActivity {
         Button btnLogin = (Button) mLoginView.findViewById(R.id.login);
         final EditText edT_username = (EditText) mLoginView.findViewById(R.id.username);
         final EditText edt_password = (EditText) mLoginView.findViewById(R.id.password);
+        final EditText edt_class_no = (EditText) mLoginView.findViewById(R.id.class_no);
         final RadioGroup group = (RadioGroup) mLoginView.findViewById(R.id.identity);
+        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup group, int checkedId) {
+                if (checkedId == R.id.admin) {
+                    edt_class_no.setVisibility(View.GONE);
+                } else if (checkedId == R.id.expert) {
+                    edt_class_no.setVisibility(View.VISIBLE);
+                }
+            }
+        });
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -150,21 +175,26 @@ public class MainActivity extends ActionBarActivity {
                 } else {
                     String username = edT_username.getText().toString();
                     String password = edt_password.getText().toString();
+                    String class_no = edt_class_no.getText().toString();
                     int role;
-                    if (group.getCheckedRadioButtonId() == R.id.professor) {
-                        role = IDENTITY_PROFESSOR;
+                    if (group.getCheckedRadioButtonId() == R.id.expert) {
+                        role = IDENTITY_EXPERT;
                     } else {
                         role = IDENTITY_ADMIN;
                     }
+                    mRole = role;
                     if (username.isEmpty() || password.isEmpty()) {
-                        Toast.makeText(mContext, "请输入完整登录信息", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(mContext, "请输入完整信息", Toast.LENGTH_SHORT).show();
+                    } else if (class_no.isEmpty() && mRole == IDENTITY_EXPERT) {
+                        Toast.makeText(mContext, "请输入完整信息", Toast.LENGTH_SHORT).show();
                     } else {
                         loginParams = new ArrayList();
                         loginParams.add(new BasicNameValuePair("username", username));
                         loginParams.add(new BasicNameValuePair("password", password));
                         loginParams.add(new BasicNameValuePair("role", String.valueOf(role)));
+                        loginParams.add(new BasicNameValuePair("class_no", class_no));
                         if (!mLoginProgressDialog.isShowing()) {
-                            mLoginProgressDialog = ProgressDialog.show(mContext, null, "登录中", true, true);
+                            mLoginProgressDialog = ProgressDialog.show(mContext, null, "正在登录", true, true);
                         }
                         new Thread(loginThread).start();
                     }
@@ -211,5 +241,25 @@ public class MainActivity extends ActionBarActivity {
         mHandler.sendMessage(msg);
         mLoginProgressDialog.dismiss();
     }
+
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            super.handleMessage(msg);
+            Bundle data = msg.getData();
+            String result = data.getString("result");
+            try {
+                mInfoJson = new JSONObject(result);
+                int isLogin = mInfoJson.getInt("isLogin");
+                if (isLogin == LOGIN_SUCCESS) {
+                    switchView(true);
+                } else if (isLogin == LOGIN_FAIL) {
+                    Toast.makeText(mContext, "用户名或密码错误", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+    };
 }
 
