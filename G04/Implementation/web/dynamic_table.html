@@ -4,10 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="description" content="">
-  <meta name="author" content="ThemeBucket">
+  <meta name="author" content="Sage Zhou">
   <link rel="shortcut icon" href="#" type="image/png">
 
-  <title>Invoice</title>
+  <title>成绩查询</title>
+
+  <!--dynamic table-->
+  <link href="js/advanced-datatable/css/demo_page.css" rel="stylesheet" />
+  <link href="js/advanced-datatable/css/demo_table.css" rel="stylesheet" />
+  <link rel="stylesheet" href="js/data-tables/DT_bootstrap.css" />
 
   <link href="css/style.css" rel="stylesheet">
   <link href="css/style-responsive.css" rel="stylesheet">
@@ -70,7 +75,7 @@
                 </li>
                 <li class="menu-list"><a href=""><i class="fa fa-book"></i> <span>UI Elements</span></a>
                     <ul class="sub-menu-list">
-                        <li><a href="general.html"> Generaw</a></li>
+                        <li><a href="general.html"> General</a></li>
                         <li><a href="buttons.html"> Buttons</a></li>
                         <li><a href="tabs-accordions.html"> Tabs & Accordions</a></li>
                         <li><a href="typography.html"> Typography</a></li>
@@ -119,10 +124,10 @@
                         <li><a href="c3chart.html"> C3 Charts</a></li>
                     </ul>
                 </li>
-                <li class="menu-list"><a href="#"><i class="fa fa-th-list"></i> <span>Data Tables</span></a>
+                <li class="menu-list nav-active"><a href="#"><i class="fa fa-th-list"></i> <span>Data Tables</span></a>
                     <ul class="sub-menu-list">
-                        <li class="active"><a href="basic_table.html"> Basic Table</a></li>
-                        <li><a href="dynamic_table.html"> Advanced Table</a></li>
+                        <li><a href="basic_table.html"> Basic Table</a></li>
+                        <li class="active"><a href="dynamic_table.html"> Advanced Table</a></li>
                         <li><a href="responsive_table.html"> Responsive Table</a></li>
                         <li><a href="editable_table.html"> Edit Table</a></li>
                     </ul>
@@ -130,14 +135,14 @@
 
                 <li class="menu-list"><a href="#"><i class="fa fa-map-marker"></i> <span>Maps</span></a>
                     <ul class="sub-menu-list">
-                        <li class="active"><a href="google_map.html"> Google Map</a></li>
+                        <li><a href="google_map.html"> Google Map</a></li>
                         <li><a href="vector_map.html"> Vector Map</a></li>
                     </ul>
                 </li>
-                <li class="menu-list nav-active"><a href=""><i class="fa fa-file-text"></i> <span>Extra Pages</span></a>
+                <li class="menu-list"><a href=""><i class="fa fa-file-text"></i> <span>Extra Pages</span></a>
                     <ul class="sub-menu-list">
                         <li><a href="profile.html"> Profile</a></li>
-                        <li class="active"><a href="invoice.html"> Invoice</a></li>
+                        <li><a href="invoice.html"> Invoice</a></li>
                         <li><a href="pricing_table.html"> Pricing Table</a></li>
                         <li><a href="timeline.html"> Timeline</a></li>
                         <li><a href="blog_list.html"> Blog List</a></li>
@@ -367,73 +372,55 @@
         </div>
         <!-- header section end-->
 
-        <!-- page heading start-->
-        <!--<div class="page-heading">-->
-            <!--Page Tittle goes here-->
-        <!--</div>-->
-        <!-- page heading end-->
+    
 
         <!--body wrapper start-->
         <div class="wrapper">
+        <div class="row">
+        <div class="col-sm-12">
+        <section class="panel">
+        <header class="panel-heading">
+            成绩 查询
+            <span class="tools pull-right">
+                <a href="javascript:;" class="fa fa-chevron-down"></a>
+                <a href="javascript:;" class="fa fa-times"></a>
+             </span>
+        </header>
+        <div class="panel-body">
+        <div class="adv-table">
+        <table  class="display table table-bordered table-striped" id="dynamic-table">
+        <thead>
+        <tr>
+            <th>考点</th>
+            <th>专业</th>
+            <th>科目</th>
+            <th>姓名</th>
+            <th>成绩</th>
+        </tr>
+        </thead>
+        <tbody>
+       
+        </tbody>
+        <tfoot>
+        <tr>
+            <th>考点</th>
+            <th>专业</th>
+            <th>科目</th>
+            <th>姓名</th>
+            <th>成绩</th>
+        </tr>
+        </tfoot>
+        </table>
+        </div>
+        </div>
+        </section>
+        </div>
+        </div>
 
-            <div class="panel">
-                <div class="panel-body invoice">
-                    <div class="row">
-                        <div class="col-md-4 col-sm-4">
-                            <h1 class="invoice-title">科目老师信息</h1>
-                        </div>
-                        <div class="col-md-4 col-md-offset-4 col-sm-4 col-sm-offset-4">
-                            <img class="inv-logo" src="images/invoice-logo.jpg" alt=""/>
-                            <p>121 King Street, Melbourne <br/>
-                                Victoria 3000 Australia <br/>
-                                Phone: +61 3 8376 6284</p>
-                        </div>
-                    </div>
-                    <div class="invoice-address">
-                        <div class="row">
-                         <button disabled="disabled" class="btn btn-primary " type="button">大连市第二十四中学</button>
-                         <div class="btn-group">
-                            <button class="btn btn-primary" type="button">科目</button>
-                            <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button">
-                                <span class="caret"></span>
-                                <span class="sr-only">Toggle Dropdown</span>
-                            </button>
-                            <ul role="menu" class="dropdown-menu">
-                                <li><a href="#">音乐学</a></li>
-                                <li><a href="#">美术学</a></li>
-                                <li><a href="#">设计</a></li>
-                                <li><a href="#">播音与主持艺术</a></li>
-                                <li class="divider"></li>
-                                <li><a href="#">所有</a></li>
-                            </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div id = "table">
-                <table class="table table-bordered table-invoice">
-                    <thead>
-                    <tr>
-                        <th class="text-center">考场</th>
-                        <th class="text-center">考试科目</th>
-                        <th class="text-center">考试时间</th>                        
-                        <th class="text-center">专家</th>
-                        <th class="text-center">联系方式</th>
-                    </tr>
-                    </thead>
-                    <tbody class="text-center">
-
-                    </tbody>
-                </table>
-               
-               </div>               
-            </div>
-            <div class="text-center ">
-                <a class="btn btn-primary btn-lg" target="_blank" href="classInfo_print.html"><i class="fa fa-print"></i> Print </a>
-            </div>
         </div>
         <!--body wrapper end-->
 
+       
         <!--footer section start-->
         <footer class="sticky-footer">
             2016 &copy; 评分管理系统 by C2G4
@@ -452,10 +439,14 @@
 <script src="js/modernizr.min.js"></script>
 <script src="js/jquery.nicescroll.js"></script>
 
+<!--dynamic table-->
+<script type="text/javascript" language="javascript" src="js/advanced-datatable/js/jquery.dataTables.js"></script>
+<script type="text/javascript" src="js/data-tables/DT_bootstrap.js"></script>
+<!--dynamic table initialization -->
+<script src="js/dynamic_table_init.js"></script>
 
 <!--common scripts for all pages-->
 <script src="js/scripts.js"></script>
-<script src="js/controller/classInfo.js"></script>
 
 </body>
 </html>
