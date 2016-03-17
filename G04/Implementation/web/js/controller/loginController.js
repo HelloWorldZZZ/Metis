@@ -1,17 +1,16 @@
-
-
-$("button#login").click(function(){
-
-   var name = $("input#userId").val();
-   var password = $("input#password").val();
-   $.post("demo_test_post.asp",
-   {
-    name:name,
-    password:password
-   },
-   function(data,status){
-    alert("Data: " + data + "\nStatus: " + status);
-    window.href();
-  });
+$("button#login").click(function() {
+  var username = $("input#userId").val();
+  var password = $("input#password").val();
+  $.post("api/web/adminLogin.php", {
+      username: username,
+      password: password
+    },
+    function(data, status) {
+      alert(data);
+      if (data == 1) {
+        window.location.assign("index.html");
+      } else {
+        alert("用户名或密码不正确");
+      }
+    });
 });
-

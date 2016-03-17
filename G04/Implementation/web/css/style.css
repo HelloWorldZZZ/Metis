@@ -3,7 +3,7 @@ Template Name: AdminEx Dashboard
 Author: ThemeBucket
 -------------------------------------------*/
 
-@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic);
+/*@import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,300italic,400italic,600,600italic,700,700italic,800,800italic);*/
 @import url('bootstrap.min.css');
 @import url('bootstrap-reset.css');
 @import url('jquery-ui-1.10.3.css');
@@ -210,7 +210,7 @@ hr {
 .logo a {
     font-size: 28px;
     color: #fff;
-    margin: 0 0 0 20px;
+    margin: 0 0 0 12px;
     text-decoration: none;
     display: inline-block;
 }
