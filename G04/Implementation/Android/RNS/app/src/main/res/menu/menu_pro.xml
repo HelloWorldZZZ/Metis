@@ -2,6 +2,10 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
+            android:id="@+id/info"
+            android:icon="@mipmap/info"
+            android:title="考试信息"></item>
+        <item
             android:id="@+id/mark"
             android:icon="@mipmap/mark"
             android:title="打分"></item>

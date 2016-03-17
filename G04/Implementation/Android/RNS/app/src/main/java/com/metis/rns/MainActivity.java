@@ -3,7 +3,6 @@ package com.metis.rns;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,27 +13,25 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.metis.rns.fragment.FragmentMark;
 import com.metis.rns.utils.Utils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -55,6 +52,7 @@ public class MainActivity extends ActionBarActivity {
     private Context mContext;
     private NavigationView mNavigationView;
     private LinearLayout mLoginView, mInfoView;
+    private FrameLayout frameLayout;
     private ProgressDialog mLoginProgressDialog;
     private DrawerLayout mDrawerLayout;
     private JSONObject mInfoJson;
@@ -65,6 +63,9 @@ public class MainActivity extends ActionBarActivity {
     final int IDENTITY_ADMIN = 1;
     final int LOGIN_SUCCESS = 1;
     final int LOGIN_FAIL = 0;
+    final int LOGIN_PAGE = 0;
+    final int INFO_PAGE = 1;
+    final int FRAME_PAGE = 2;
     ArrayList loginParams;
 
     private Thread loginThread = new Thread(new Runnable() {
@@ -89,6 +90,7 @@ public class MainActivity extends ActionBarActivity {
     private void initContentView() {
         mLoginView = (LinearLayout) findViewById(R.id.page_login);
         mInfoView = (LinearLayout) findViewById(R.id.page_info);
+        frameLayout = (FrameLayout)findViewById(R.id.frame_content);
         //设置ToolBar
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitleTextColor(Color.WHITE);
@@ -106,9 +108,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void initLoginView() {
-        mNavigationView.setVisibility(View.GONE);
-        mLoginView.setVisibility(View.VISIBLE);
-        mInfoView.setVisibility(View.GONE);
+        changViewVisibility(LOGIN_PAGE);
         Button btnLogin = (Button) mLoginView.findViewById(R.id.login);
         final EditText edT_username = (EditText) mLoginView.findViewById(R.id.username);
         final EditText edt_password = (EditText) mLoginView.findViewById(R.id.password);
@@ -159,37 +159,59 @@ public class MainActivity extends ActionBarActivity {
         });
     }
 
+    private void changViewVisibility(int TYPE) {
+        switch (TYPE) {
+            case LOGIN_PAGE:
+                mNavigationView.setVisibility(View.GONE);
+                mLoginView.setVisibility(View.VISIBLE);
+                mInfoView.setVisibility(View.GONE);
+                frameLayout.setVisibility(View.GONE);
+                break;
+            case INFO_PAGE:
+                mNavigationView.setVisibility(View.VISIBLE);
+                mLoginView.setVisibility(View.GONE);
+                mInfoView.setVisibility(View.VISIBLE);
+                frameLayout.setVisibility(View.GONE);
+                break;
+            case FRAME_PAGE:
+                mNavigationView.setVisibility(View.VISIBLE);
+                mLoginView.setVisibility(View.GONE);
+                mInfoView.setVisibility(View.GONE);
+                frameLayout.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
     private void initInfoView() {
-        mNavigationView.setVisibility(View.VISIBLE);
-        mLoginView.setVisibility(View.GONE);
-        mInfoView.setVisibility(View.VISIBLE);
-        mDrawerLayout.openDrawer(Gravity.LEFT);
-        SharedPreferences preferences = getSharedPreferences("user_info", MODE_PRIVATE);
-        SharedPreferences.Editor editor = preferences.edit();
+        changViewVisibility(INFO_PAGE);
         try {
             TextView tvUserName = (TextView) findViewById(R.id.user_info_txt);
             ImageView ivPersonImg = (ImageView) findViewById(R.id.drawer_header_person_img);
             if (mRole == IDENTITY_ADMIN) {
                 mNavigationView.setNavigationItemSelectedListener(new AdminNavigationViewListener());
                 String adminName = mInfoJson.getString("admin_account_name");
-                editor.putString("userName", adminName);
                 tvUserName.setText(adminName);
                 ivPersonImg.setImageResource(R.mipmap.admin);
                 mNavigationView.inflateMenu(R.menu.menu_admin);
+                mInfoView.setVisibility(View.GONE);
+                mDrawerLayout.openDrawer(Gravity.LEFT);
             } else if (mRole == IDENTITY_EXPERT) {
                 mNavigationView.setNavigationItemSelectedListener(new ExpertNavigationViewListener());
                 String expertName = mInfoJson.getString("expert_name");
                 String class_no = mInfoJson.getString("test_class_no");
                 String subject = mInfoJson.getString("test_subject_name");
                 String type = mInfoJson.getString("type_name");
-                TextView classInfo = (TextView)mInfoView.findViewById(R.id.class_info);
-                classInfo.setText("考场号: " + class_no + "\n科目: " + subject + "\n专业: " + type);
+                TextView classNo = (TextView)mInfoView.findViewById(R.id.classNo);
+                classNo.setText(class_no);
+                getIntent().putExtra("class_no", class_no);
+                TextView examType = (TextView)mInfoView.findViewById(R.id.examType);
+                examType.setText(type);
+                TextView examSubject = (TextView)mInfoView.findViewById(R.id.examSubject);
+                examSubject.setText(subject);
                 tvUserName.setText(expertName);
                 ivPersonImg.setImageResource(R.mipmap.professor);
                 mNavigationView.inflateMenu(R.menu.menu_pro);
-                editor.putString("userName", expertName);
             }
-            editor.commit();
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -275,9 +297,6 @@ public class MainActivity extends ActionBarActivity {
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        SharedPreferences preferences = getSharedPreferences("user_info", MODE_PRIVATE);
-                        SharedPreferences.Editor editor = preferences.edit();
-                        editor.clear().commit();
                         finish();
                     }
                 })
@@ -291,12 +310,17 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
+                case R.id.info:
+                    changViewVisibility(INFO_PAGE);
+                    mToolbar.setTitle(getString(R.string.app_name));
+                    break;
                 case R.id.mark:
-                    //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentOne()).commit();
+                    changViewVisibility(FRAME_PAGE);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentMark()).commit();
                     mToolbar.setTitle("学生列表");
                     break;
                 case R.id.logout:
-                    mToolbar.setTitle("注销");
+                    showExitDialog();
                     break;
             }
             menuItem.setChecked(true);//点击了把它设为选中状态
@@ -319,7 +343,8 @@ public class MainActivity extends ActionBarActivity {
                     mToolbar.setTitle("成绩上传");
                     break;
                 case R.id.logout:
-                    mToolbar.setTitle("注销");
+                    mToolbar.setTitle(getString(R.string.app_name));
+                    switchView(false);
                     break;
             }
             menuItem.setChecked(true);//点击了把它设为选中状态
