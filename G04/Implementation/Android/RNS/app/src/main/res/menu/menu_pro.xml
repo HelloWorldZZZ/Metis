@@ -2,16 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/item_one"
-            android:icon="@mipmap/icon"
-            android:title="我的动态"></item>
+            android:id="@+id/mark"
+            android:icon="@mipmap/mark"
+            android:title="打分"></item>
         <item
-            android:id="@+id/item_two"
-            android:icon="@mipmap/icon"
-            android:title="我的留言"></item>
-        <item
-            android:id="@+id/item_three"
-            android:icon="@mipmap/icon"
-            android:title="附近的人"></item>
+            android:id="@+id/logout"
+            android:icon="@mipmap/logout"
+            android:title="注销"></item>
     </group>
 </menu>
