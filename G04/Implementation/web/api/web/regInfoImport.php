@@ -1,8 +1,8 @@
 <?php
 include_once("./Excel/reader.php");
-	$filename=$_FILES["excel"]["name"];
+	$filename=$_FILES["file"]["name"];
 	$dir=$filename;
-	if(!move_uploaded_file($_FILES["excel"]["tmp_name"],$dir)){
+	if(!move_uploaded_file($_FILES["file"]["tmp_name"],$dir)){
 		$logger->warn("upload failed.");
 		$logger->warn("excel save failed: $dir");
 		$logger->warn("upload tmp_name is: " . $_FILES["photo"]["tmp_name"]);
