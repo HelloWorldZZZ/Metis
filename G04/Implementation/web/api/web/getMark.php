@@ -1,10 +1,27 @@
 ﻿<?php
 	include_once("../config.php");
-	$c=new mysqli();
-	$c->connect(DB_HOST,DB_USER,DB_PSW,DB_NAME);
-	$c->query("set names UTF8");
-	$query="select a.impression_mark,a.final_mark,c.test_class_no,d.test_subject_name,e.expert_name,f.real_name from d_specific_mark_info a,d_test_arrangement b,s_test_class c,s_test_subject d,d_expert e,d_enroll_basic_info f where a.test_id=b.test_id and b.test_class_id=c.test_class_id and b.expert_id=e.expert_id and d.test_subject_id=b.test_subject_id and f.enroll_num=b.enroll_num";
+
+	$query="select a.mark,b.expert_name,c.subject_id,c.subject_name,e.student_name,f.sub_type_id,f.sub_type_name from d_mark a,s_expert b,s_subject c,d_enroll d,s_student e,s_sub_type f where a.enroll_num=d.enroll_num and d.student_id = e.student_id and c.subject_id=a.subject_id and a.expert_id=b.expert_id and c.sub_type_id=f.sub_type_id order by a.subject_id";
 	$sql=$c->query($query);
-	while($result=mysqli_fetch_object($sql))
-		$group[]=$result;
+	$subject_id=0;
+	while($result=mysqli_fetch_object($sql)){
+		if($result->subject_id!=$subject_id){
+			if(@$obj!=null)
+				$group[]=$obj;
+			$obj=null;
+			$subject_id=$result->subject_id;
+			@$obj->expert_name=$result->expert_name;
+			@$obj->sub_type_id=$result->sub_type_id;
+			@$obj->sub_type_name=$result->sub_type_name;
+			@$obj->subject_id=$result->subject_id;
+			@$obj->subject_name=$result->subject_name;
+			
+			
+		}
+		@$obj->mark_list[]=array(
+							"student_name"=>$result->student_name,
+							"mark"=>$result->mark
+						);			
+	}
+	$group[]=$obj;
 	echo json_encode($group,JSON_UNESCAPED_UNICODE);
