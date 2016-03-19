@@ -28,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metis.rns.fragment.FragmentMark;
+import com.metis.rns.po.Exam;
 import com.metis.rns.utils.Utils;
 
 import org.apache.http.HttpEntity;
@@ -39,6 +40,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -57,6 +59,7 @@ public class MainActivity extends ActionBarActivity {
     private DrawerLayout mDrawerLayout;
     private JSONObject mInfoJson;
     private Toolbar mToolbar;
+    private Exam mExam;
     private boolean isLogin;
     private int mRole;
     final int IDENTITY_EXPERT = 2;
@@ -112,18 +115,7 @@ public class MainActivity extends ActionBarActivity {
         Button btnLogin = (Button) mLoginView.findViewById(R.id.login);
         final EditText edT_username = (EditText) mLoginView.findViewById(R.id.username);
         final EditText edt_password = (EditText) mLoginView.findViewById(R.id.password);
-        final EditText edt_class_no = (EditText) mLoginView.findViewById(R.id.class_no);
         final RadioGroup group = (RadioGroup) mLoginView.findViewById(R.id.identity);
-        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.admin) {
-                    edt_class_no.setVisibility(View.GONE);
-                } else if (checkedId == R.id.expert) {
-                    edt_class_no.setVisibility(View.VISIBLE);
-                }
-            }
-        });
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -132,7 +124,6 @@ public class MainActivity extends ActionBarActivity {
                 } else {
                     String username = edT_username.getText().toString();
                     String password = edt_password.getText().toString();
-                    String class_no = edt_class_no.getText().toString();
                     int role;
                     if (group.getCheckedRadioButtonId() == R.id.expert) {
                         role = IDENTITY_EXPERT;
@@ -142,14 +133,11 @@ public class MainActivity extends ActionBarActivity {
                     mRole = role;
                     if (username.isEmpty() || password.isEmpty()) {
                         Toast.makeText(mContext, "请输入完整信息", Toast.LENGTH_SHORT).show();
-                    } else if (class_no.isEmpty() && mRole == IDENTITY_EXPERT) {
-                        Toast.makeText(mContext, "请输入完整信息", Toast.LENGTH_SHORT).show();
                     } else {
                         loginParams = new ArrayList();
                         loginParams.add(new BasicNameValuePair("username", username));
                         loginParams.add(new BasicNameValuePair("password", password));
                         loginParams.add(new BasicNameValuePair("role", String.valueOf(role)));
-                        loginParams.add(new BasicNameValuePair("class_no", class_no));
                         mLoginProgressDialog = ProgressDialog.show(mContext, null, "正在登录", true, true);
                         mLoginProgressDialog.setCancelable(false);
                         new Thread(loginThread).start();
@@ -196,22 +184,44 @@ public class MainActivity extends ActionBarActivity {
                 mInfoView.setVisibility(View.GONE);
                 mDrawerLayout.openDrawer(Gravity.LEFT);
             } else if (mRole == IDENTITY_EXPERT) {
+                initExamInfo(mInfoJson);
                 mNavigationView.setNavigationItemSelectedListener(new ExpertNavigationViewListener());
-                String expertName = mInfoJson.getString("expert_name");
-                String class_no = mInfoJson.getString("test_class_no");
-                String subject = mInfoJson.getString("test_subject_name");
-                String type = mInfoJson.getString("type_name");
+                String expertName = mExam.getExpert_name();
+                String class_no = mExam.getClass_no();
+                String subject = mExam.getSubject_name();
+                String type = mExam.getSub_type_name();
+                String date = mExam.getDate();
                 TextView classNo = (TextView)mInfoView.findViewById(R.id.classNo);
                 classNo.setText(class_no);
-                getIntent().putExtra("class_no", class_no);
                 TextView examType = (TextView)mInfoView.findViewById(R.id.examType);
                 examType.setText(type);
                 TextView examSubject = (TextView)mInfoView.findViewById(R.id.examSubject);
                 examSubject.setText(subject);
+                TextView examDate = (TextView)mInfoView.findViewById(R.id.examDate);
+                examDate.setText(date);
                 tvUserName.setText(expertName);
                 ivPersonImg.setImageResource(R.mipmap.professor);
                 mNavigationView.inflateMenu(R.menu.menu_pro);
             }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initExamInfo(JSONObject jsonObject) {
+        try {
+            String test_id = jsonObject.getString("test_id");
+            String class_id = jsonObject.getString("class_id");
+            String class_no = jsonObject.getString("class_no");
+            String subject_id = jsonObject.getString("subject_id");
+            String subject_name = jsonObject.getString("subject_name");
+            String sub_type_name = jsonObject.getString("sub_type_name");
+            String expert_id = jsonObject.getString("expert_id");
+            String expert_name = jsonObject.getString("expert_name");
+            String date = jsonObject.getString("Date");
+            JSONArray studentList = jsonObject.getJSONArray("student_list");
+            mExam = new Exam(test_id, class_id, class_no, subject_id, subject_name,
+                    sub_type_name, expert_id, expert_name, date, studentList);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -310,12 +320,9 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
-                case R.id.info:
-                    changViewVisibility(INFO_PAGE);
-                    mToolbar.setTitle(getString(R.string.app_name));
-                    break;
                 case R.id.mark:
                     changViewVisibility(FRAME_PAGE);
+                    getIntent().putExtra("examInfo", mExam);
                     getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentMark()).commit();
                     mToolbar.setTitle("学生列表");
                     break;
