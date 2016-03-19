@@ -15,7 +15,14 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+            android:elevation="6dp"
             android:background="@color/actionbar_color"/>
+
+        <FrameLayout
+            android:id="@+id/frame_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone"/>
         <!--内容显示布局-->
         <include layout="@layout/page_login" />
         <include layout="@layout/page_info" />

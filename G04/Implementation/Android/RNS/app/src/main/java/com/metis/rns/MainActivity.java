@@ -2,6 +2,7 @@ package com.metis.rns;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -11,25 +12,27 @@ import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBarDrawerToggle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
+import android.view.KeyEvent;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.metis.rns.fragment.FragmentMark;
+import com.metis.rns.po.Exam;
 import com.metis.rns.utils.Utils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -37,6 +40,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,14 +54,21 @@ public class MainActivity extends ActionBarActivity {
     private Context mContext;
     private NavigationView mNavigationView;
     private LinearLayout mLoginView, mInfoView;
+    private FrameLayout frameLayout;
     private ProgressDialog mLoginProgressDialog;
     private DrawerLayout mDrawerLayout;
     private JSONObject mInfoJson;
+    private Toolbar mToolbar;
+    private Exam mExam;
+    private boolean isLogin;
     private int mRole;
     final int IDENTITY_EXPERT = 2;
     final int IDENTITY_ADMIN = 1;
     final int LOGIN_SUCCESS = 1;
     final int LOGIN_FAIL = 0;
+    final int LOGIN_PAGE = 0;
+    final int INFO_PAGE = 1;
+    final int FRAME_PAGE = 2;
     ArrayList loginParams;
 
     private Thread loginThread = new Thread(new Runnable() {
@@ -74,17 +85,17 @@ public class MainActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drawer_main);
         mContext = this;
-        mLoginProgressDialog = new ProgressDialog(mContext);
-        mLoginProgressDialog.setCancelable(false);
-        initNavigationView();
-        switchView(false);
+        isLogin = false;
+        initContentView();
+        initLoginView();
     }
 
-    private void initNavigationView() {
+    private void initContentView() {
         mLoginView = (LinearLayout) findViewById(R.id.page_login);
         mInfoView = (LinearLayout) findViewById(R.id.page_info);
+        frameLayout = (FrameLayout)findViewById(R.id.frame_content);
         //设置ToolBar
-        final Toolbar mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar = (Toolbar) findViewById(R.id.toolbar);
         mToolbar.setTitleTextColor(Color.WHITE);
         setSupportActionBar(mToolbar);
 
@@ -97,76 +108,14 @@ public class MainActivity extends ActionBarActivity {
 
         //设置导航栏NavigationView的点击事件
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
-        mNavigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem menuItem) {
-                switch (menuItem.getItemId()) {
-                    case R.id.item_one:
-                        //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentOne()).commit();
-                        mToolbar.setTitle("我的动态");
-                        break;
-                    case R.id.item_two:
-                        //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentTwo()).commit();
-                        mToolbar.setTitle("我的留言");
-                        break;
-                    case R.id.item_three:
-                        //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentThree()).commit();
-                        mToolbar.setTitle("附近的人");
-                        break;
-                }
-                menuItem.setChecked(true);//点击了把它设为选中状态
-                mDrawerLayout.closeDrawers();//关闭抽屉
-                return true;
-            }
-        });
-    }
-
-    private void initInfoView() {
-        mNavigationView.setVisibility(View.VISIBLE);
-        mLoginView.setVisibility(View.GONE);
-        mInfoView.setVisibility(View.VISIBLE);
-        mDrawerLayout.openDrawer(Gravity.LEFT);
-        try {
-            TextView tvUserName = (TextView) findViewById(R.id.user_info_txt);
-            ImageView ivPersonImg = (ImageView) findViewById(R.id.drawer_header_person_img);
-            if (mRole == IDENTITY_ADMIN) {
-                String adminName = mInfoJson.getString("admin_account_name");
-                tvUserName.setText(adminName);
-                ivPersonImg.setImageResource(R.mipmap.admin);
-                mNavigationView.inflateMenu(R.menu.menu_admin);
-            } else if (mRole == IDENTITY_EXPERT) {
-                String expertName = mInfoJson.getString("expert_name");
-                String class_no = mInfoJson.getString("test_class_no");
-                String subject = mInfoJson.getString("test_subject_name");
-                String type = mInfoJson.getString("type_name");
-                tvUserName.setText(expertName);
-                ivPersonImg.setImageResource(R.mipmap.professor);
-                mNavigationView.inflateMenu(R.menu.menu_pro);
-            }
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
     }
 
     private void initLoginView() {
-        mNavigationView.setVisibility(View.GONE);
-        mLoginView.setVisibility(View.VISIBLE);
-        mInfoView.setVisibility(View.GONE);
+        changViewVisibility(LOGIN_PAGE);
         Button btnLogin = (Button) mLoginView.findViewById(R.id.login);
         final EditText edT_username = (EditText) mLoginView.findViewById(R.id.username);
         final EditText edt_password = (EditText) mLoginView.findViewById(R.id.password);
-        final EditText edt_class_no = (EditText) mLoginView.findViewById(R.id.class_no);
         final RadioGroup group = (RadioGroup) mLoginView.findViewById(R.id.identity);
-        group.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if (checkedId == R.id.admin) {
-                    edt_class_no.setVisibility(View.GONE);
-                } else if (checkedId == R.id.expert) {
-                    edt_class_no.setVisibility(View.VISIBLE);
-                }
-            }
-        });
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,7 +124,6 @@ public class MainActivity extends ActionBarActivity {
                 } else {
                     String username = edT_username.getText().toString();
                     String password = edt_password.getText().toString();
-                    String class_no = edt_class_no.getText().toString();
                     int role;
                     if (group.getCheckedRadioButtonId() == R.id.expert) {
                         role = IDENTITY_EXPERT;
@@ -185,22 +133,98 @@ public class MainActivity extends ActionBarActivity {
                     mRole = role;
                     if (username.isEmpty() || password.isEmpty()) {
                         Toast.makeText(mContext, "请输入完整信息", Toast.LENGTH_SHORT).show();
-                    } else if (class_no.isEmpty() && mRole == IDENTITY_EXPERT) {
-                        Toast.makeText(mContext, "请输入完整信息", Toast.LENGTH_SHORT).show();
                     } else {
                         loginParams = new ArrayList();
                         loginParams.add(new BasicNameValuePair("username", username));
                         loginParams.add(new BasicNameValuePair("password", password));
                         loginParams.add(new BasicNameValuePair("role", String.valueOf(role)));
-                        loginParams.add(new BasicNameValuePair("class_no", class_no));
-                        if (!mLoginProgressDialog.isShowing()) {
-                            mLoginProgressDialog = ProgressDialog.show(mContext, null, "正在登录", true, true);
-                        }
+                        mLoginProgressDialog = ProgressDialog.show(mContext, null, "正在登录", true, true);
+                        mLoginProgressDialog.setCancelable(false);
                         new Thread(loginThread).start();
                     }
                 }
             }
         });
+    }
+
+    private void changViewVisibility(int TYPE) {
+        switch (TYPE) {
+            case LOGIN_PAGE:
+                mNavigationView.setVisibility(View.GONE);
+                mLoginView.setVisibility(View.VISIBLE);
+                mInfoView.setVisibility(View.GONE);
+                frameLayout.setVisibility(View.GONE);
+                break;
+            case INFO_PAGE:
+                mNavigationView.setVisibility(View.VISIBLE);
+                mLoginView.setVisibility(View.GONE);
+                mInfoView.setVisibility(View.VISIBLE);
+                frameLayout.setVisibility(View.GONE);
+                break;
+            case FRAME_PAGE:
+                mNavigationView.setVisibility(View.VISIBLE);
+                mLoginView.setVisibility(View.GONE);
+                mInfoView.setVisibility(View.GONE);
+                frameLayout.setVisibility(View.VISIBLE);
+                break;
+        }
+    }
+
+    private void initInfoView() {
+        changViewVisibility(INFO_PAGE);
+        try {
+            TextView tvUserName = (TextView) findViewById(R.id.user_info_txt);
+            ImageView ivPersonImg = (ImageView) findViewById(R.id.drawer_header_person_img);
+            if (mRole == IDENTITY_ADMIN) {
+                mNavigationView.setNavigationItemSelectedListener(new AdminNavigationViewListener());
+                String adminName = mInfoJson.getString("admin_account_name");
+                tvUserName.setText(adminName);
+                ivPersonImg.setImageResource(R.mipmap.admin);
+                mNavigationView.inflateMenu(R.menu.menu_admin);
+                mInfoView.setVisibility(View.GONE);
+                mDrawerLayout.openDrawer(Gravity.LEFT);
+            } else if (mRole == IDENTITY_EXPERT) {
+                initExamInfo(mInfoJson);
+                mNavigationView.setNavigationItemSelectedListener(new ExpertNavigationViewListener());
+                String expertName = mExam.getExpert_name();
+                String class_no = mExam.getClass_no();
+                String subject = mExam.getSubject_name();
+                String type = mExam.getSub_type_name();
+                String date = mExam.getDate();
+                TextView classNo = (TextView)mInfoView.findViewById(R.id.classNo);
+                classNo.setText(class_no);
+                TextView examType = (TextView)mInfoView.findViewById(R.id.examType);
+                examType.setText(type);
+                TextView examSubject = (TextView)mInfoView.findViewById(R.id.examSubject);
+                examSubject.setText(subject);
+                TextView examDate = (TextView)mInfoView.findViewById(R.id.examDate);
+                examDate.setText(date);
+                tvUserName.setText(expertName);
+                ivPersonImg.setImageResource(R.mipmap.professor);
+                mNavigationView.inflateMenu(R.menu.menu_pro);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void initExamInfo(JSONObject jsonObject) {
+        try {
+            String test_id = jsonObject.getString("test_id");
+            String class_id = jsonObject.getString("class_id");
+            String class_no = jsonObject.getString("class_no");
+            String subject_id = jsonObject.getString("subject_id");
+            String subject_name = jsonObject.getString("subject_name");
+            String sub_type_name = jsonObject.getString("sub_type_name");
+            String expert_id = jsonObject.getString("expert_id");
+            String expert_name = jsonObject.getString("expert_name");
+            String date = jsonObject.getString("Date");
+            JSONArray studentList = jsonObject.getJSONArray("student_list");
+            mExam = new Exam(test_id, class_id, class_no, subject_id, subject_name,
+                    sub_type_name, expert_id, expert_name, date, studentList);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
     private void switchView(boolean isLogin) {
@@ -250,10 +274,12 @@ public class MainActivity extends ActionBarActivity {
             String result = data.getString("result");
             try {
                 mInfoJson = new JSONObject(result);
-                int isLogin = mInfoJson.getInt("isLogin");
-                if (isLogin == LOGIN_SUCCESS) {
+                int logined = mInfoJson.getInt("isLogin");
+                if (logined == LOGIN_SUCCESS) {
+                    isLogin = true;
                     switchView(true);
-                } else if (isLogin == LOGIN_FAIL) {
+                } else if (logined == LOGIN_FAIL) {
+                    isLogin = false;
                     Toast.makeText(mContext, "用户名或密码错误", Toast.LENGTH_SHORT).show();
                 }
             } catch (JSONException e) {
@@ -261,5 +287,78 @@ public class MainActivity extends ActionBarActivity {
             }
         }
     };
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if(isLogin) {
+                showExitDialog();
+            } else {
+                finish();
+            }
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    private void showExitDialog() {
+        AlertDialog exitDialog = new AlertDialog.Builder(mContext)
+                .setTitle(getString(R.string.app_name))
+                .setMessage("退出系统并注销?")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .create();
+        exitDialog.show();
+    }
+
+    private class ExpertNavigationViewListener implements NavigationView.OnNavigationItemSelectedListener {
+
+        @Override
+        public boolean onNavigationItemSelected(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.mark:
+                    changViewVisibility(FRAME_PAGE);
+                    getIntent().putExtra("examInfo", mExam);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentMark()).commit();
+                    mToolbar.setTitle("学生列表");
+                    break;
+                case R.id.logout:
+                    showExitDialog();
+                    break;
+            }
+            menuItem.setChecked(true);//点击了把它设为选中状态
+            mDrawerLayout.closeDrawers();//关闭抽屉
+            return true;
+        }
+    }
+
+    private class AdminNavigationViewListener implements NavigationView.OnNavigationItemSelectedListener {
+
+        @Override
+        public boolean onNavigationItemSelected(MenuItem menuItem) {
+            switch (menuItem.getItemId()) {
+                case R.id.setting:
+                    //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentOne()).commit();
+                    mToolbar.setTitle("设置服务器");
+                    break;
+                case R.id.mark:
+                    //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentOne()).commit();
+                    mToolbar.setTitle("成绩上传");
+                    break;
+                case R.id.logout:
+                    mToolbar.setTitle(getString(R.string.app_name));
+                    switchView(false);
+                    break;
+            }
+            menuItem.setChecked(true);//点击了把它设为选中状态
+            mDrawerLayout.closeDrawers();//关闭抽屉
+            return true;
+        }
+    }
+
 }
 
