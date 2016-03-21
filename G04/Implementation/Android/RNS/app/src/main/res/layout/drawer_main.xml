@@ -15,7 +15,7 @@
             android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:elevation="3dp"
+            android:elevation="6dp"
             android:background="@color/actionbar_color"/>
 
         <FrameLayout

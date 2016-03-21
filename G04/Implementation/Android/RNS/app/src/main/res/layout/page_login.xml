@@ -37,15 +37,6 @@
             android:hint="密码"
             android:inputType="textPassword" />
 
-        <EditText
-            android:id="@+id/class_no"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginLeft="@dimen/login_page_margin"
-            android:layout_marginRight="@dimen/login_page_margin"
-            android:layout_weight="1"
-            android:hint="考场号" />
-
         <RadioGroup
             android:id="@+id/identity"
             android:layout_width="wrap_content"
