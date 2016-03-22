@@ -37,7 +37,7 @@ public class FragmentSettings extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        mRootView = inflater.inflate(R.layout.fragment_done,container,false);
+        mRootView = inflater.inflate(R.layout.fragment_settings,container,false);
 
         return mRootView;
     }
