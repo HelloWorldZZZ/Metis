@@ -16,6 +16,9 @@
 				$c->query("update d_mark set test_temp_id=$i where enroll_num=$stu[enroll_num] and subject_id=$subject_id");
 			}
 		}
+	}else{
+		while($result=mysqli_fetch_object($sql1))
+			$result_array[]=$result;
 	}
 	$sql1=$c->query("select * from s_test_school_subject_class where school_id=20");
 	foreach($result_array as $result){
