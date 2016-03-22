@@ -27,7 +27,6 @@ $.get("api/web/getClassInfo.php", function(data) {
 			window.localStorage.html = $("#table").html();
 		});
 
-
 	});
 
 });
