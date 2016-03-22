@@ -4,6 +4,9 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Created by triplez on 16-3-14.
  */
@@ -32,5 +35,12 @@ public class Utils {
         }
 
         return false;
+    }
+
+    public static String getDate(){
+        Date date = new Date(System.currentTimeMillis());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String time = dateFormat.format(date);
+        return time;
     }
 }

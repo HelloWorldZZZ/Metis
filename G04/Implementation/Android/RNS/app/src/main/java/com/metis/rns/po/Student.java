@@ -45,4 +45,5 @@ public class Student {
     public void setImpress_score(int impress_score) {
         this.impress_score = impress_score;
     }
+
 }

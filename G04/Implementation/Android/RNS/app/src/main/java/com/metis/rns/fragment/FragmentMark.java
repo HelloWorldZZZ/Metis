@@ -6,6 +6,7 @@ package com.metis.rns.fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Looper;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +26,7 @@ import android.widget.Toast;
 import com.metis.rns.R;
 import com.metis.rns.po.Exam;
 import com.metis.rns.po.Student;
+import com.metis.rns.utils.Utils;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -53,6 +55,8 @@ public class FragmentMark extends Fragment {
     private JSONArray studentJson;
     private ArrayList<Student> studentList;
     private Exam mExam;
+    private SharedPreferences examPreferences;
+    private SharedPreferences.Editor examEditor;
     private boolean hasImpressMarked = false;
     private boolean hasFinalMarked = false;
 
@@ -62,6 +66,10 @@ public class FragmentMark extends Fragment {
                              Bundle savedInstanceState) {
         mRootView = inflater.inflate(R.layout.fragment_mark,container,false);
         mExam = (Exam) getActivity().getIntent().getSerializableExtra("examInfo");
+        examPreferences = getActivity().getSharedPreferences(mExam.getTest_id()+mExam.getClass_id(), Context.MODE_PRIVATE);
+        examEditor = examPreferences.edit();
+        hasImpressMarked = examPreferences.getBoolean("hasImpressMarked", false);
+        hasFinalMarked = examPreferences.getBoolean("hasFinalMarked", false);
         studentJson = mExam.getStudent_list();
         studentList = new ArrayList<>();
         initView();
@@ -70,7 +78,7 @@ public class FragmentMark extends Fragment {
 
     private void initView() {
         initStudentList();
-        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.studentList);
+        mRecyclerView = (RecyclerView) mRootView.findViewById(R.id.list);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
         mRecyclerView.setHasFixedSize(true);
@@ -101,7 +109,12 @@ public class FragmentMark extends Fragment {
                 Student student = new Student(jo.getString("enroll_num"), jo.getString("student_school"),
                         jo.getString("student_birthday"), jo.getString("student_nation"), jo.getString("student_sex"),
                         jo.getString("student_name"), jo.getString("test_temp_id"), jo.getString("test_num"));
-                studentList.add(student);
+                SharedPreferences studentPreferences = getActivity().getSharedPreferences(
+                        "student_"+jo.getString("enroll_num")+mExam.getSubject_id(), Context.MODE_PRIVATE);
+                int impressScore = studentPreferences.getInt("impressScore", -1);
+                int finalScore = studentPreferences.getInt("finalScore", -1);
+                student.setImpress_score(impressScore);
+                student.setFinal_score(finalScore);
                 studentList.add(student);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -182,6 +195,9 @@ public class FragmentMark extends Fragment {
     }
 
     private void showMarkDialog(final Student student) {
+        SharedPreferences studentPreferences = getActivity().getSharedPreferences(
+                "student_"+student.enroll_num+mExam.getSubject_id(), Context.MODE_PRIVATE);
+        final SharedPreferences.Editor studentEditor = studentPreferences.edit();
         LayoutInflater inflater = LayoutInflater.from(getActivity());
         View markView = inflater.inflate(R.layout.layout_mark, null);
         TextView s_name = (TextView) markView.findViewById(R.id.s_name);
@@ -225,10 +241,15 @@ public class FragmentMark extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         if (!hasImpressMarked) {
-                            student.setImpress_score(impressPicker.getValue());
+                            int impressScore = impressPicker.getValue();
+                            studentEditor.putInt("impressScore",impressScore);
+                            student.setImpress_score(impressScore);
                         } else {
-                            student.setFinal_score(finalPicker.getValue());
+                            int finalScore = finalPicker.getValue();
+                            studentEditor.putInt("finalScore",finalScore);
+                            student.setFinal_score(finalScore);
                         }
+                        studentEditor.commit();
                         myAdapter.notifyDataSetChanged();
                     }
                 })
@@ -259,9 +280,14 @@ public class FragmentMark extends Fragment {
                     public void onClick(DialogInterface dialog, int which) {
                         if (! hasImpressMarked) {
                             hasImpressMarked = true;
+                            examEditor.putBoolean("hasImpressMarked",true);
+                            examEditor.commit();
                             Toast.makeText(getActivity(), "印象分提交成功,请打考试分", Toast.LENGTH_SHORT).show();
                         } else {
                             hasFinalMarked = true;
+                            examEditor.putBoolean("hasFinalMarked",true);
+                            examEditor.commit();
+                            saveExamInfo();
                             Toast.makeText(getActivity(), "考试分提交成功,请注销", Toast.LENGTH_SHORT).show();
                         }
                     }
@@ -269,6 +295,38 @@ public class FragmentMark extends Fragment {
                 .setNegativeButton("取消", null)
                 .create();
         uploadDialog.show();
+    }
+
+    private void saveExamInfo() {
+        SharedPreferences mSharedPreferences = getActivity().getSharedPreferences("exam", Context.MODE_PRIVATE);
+        SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+        String list = mSharedPreferences.getString("examList", "[]");
+        try {
+            JSONArray examList = new JSONArray(list);
+
+            JSONObject examItem = new JSONObject();
+            examItem.put("subject_id", mExam.getSubject_id());
+            examItem.put("subject_name", mExam.getSubject_name());
+            examItem.put("expert_id", mExam.getExpert_id());
+            examItem.put("expert_name", mExam.getExpert_name());
+            examItem.put("create_time", Utils.getDate());
+            JSONArray markList = new JSONArray();
+            for (Student student : studentList){
+                JSONObject jsonMark = new JSONObject();
+                jsonMark.put("enroll_num", student.enroll_num);
+                jsonMark.put("student_name", student.student_name);
+                jsonMark.put("test_temp_id", student.temp_testid);
+                jsonMark.put("mark", student.getImpress_score() + student.getFinal_score());
+                markList.put(jsonMark);
+            }
+            examItem.put("markList",markList);
+            examList.put(examItem);
+
+            mEditor.putString("examList", examList.toString());
+            mEditor.commit();
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
 
 }
