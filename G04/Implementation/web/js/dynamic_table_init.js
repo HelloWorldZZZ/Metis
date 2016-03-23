@@ -11,13 +11,13 @@ function fnFormatDetails(oTable, nTr) {
 
 $(document).ready(function() {
 
-   
 
     $('#dynamic-table').dataTable({
-        "aaSorting": [
-            [4, "desc"]
-        ]
+        "order": []
     });
+
+    $('select').addClass('form-control');
+    $('input').addClass('form-control');
 
     /*
      * Insert a 'details' column to the table
@@ -64,4 +64,20 @@ $(document).ready(function() {
             oTable.fnOpen(nTr, fnFormatDetails(oTable, nTr), 'details');
         }
     });
+
+
+    var lastIdx = null;
+    var table = $('table').DataTable();
+    $('tbody')
+        .on('mouseover', 'td', function() {
+            var colIdx = table.cell(this).index().column;
+            if (colIdx !== lastIdx) {
+                $(table.cells().nodes()).removeClass('highlighted');
+                $(table.column(colIdx).nodes()).addClass('highlighted');
+            }
+        })
+        .on('mouseleave', function() {
+            $(table.cells().nodes()).removeClass('highlighted');
+        });
+
 });
