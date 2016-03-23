@@ -1,4 +1,4 @@
-﻿<?php
+<?php
 	include_once("./Excel/reader.php");
 	$filename=$_FILES["file"]["name"];
 	$dir=$filename;
