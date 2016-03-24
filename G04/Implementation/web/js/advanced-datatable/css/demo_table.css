@@ -246,7 +246,7 @@ table.display tr.even.gradeU {
 
 
 tr.odd {
-	background-color: #E2E4FF;
+	background-color: white;
 }
 
 tr.even {
@@ -254,7 +254,22 @@ tr.even {
 }
 
 
+tbody  td.highlighted {
+	background-color: #E2E4FF;
+}
 
+tbody  td.highlighted {
+	background-color: #E2E4FF;
+}
+
+
+tr.even:hover {
+	background-color: #E2E4FF;
+}
+
+tr.odd:hover {
+	background-color: #E2E4FF;
+}
 
 
 /* * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *

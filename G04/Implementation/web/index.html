@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
   <meta name="keywords" content="admin, dashboard, bootstrap, template, flat, modern, theme, responsive, fluid, retina, backend, html5, css, css3">
   <meta name="description" content="">
-  <meta name="author" content="ThemeBucket">
+  <meta name="author" content="Sage Zhou">
   <link rel="shortcut icon" href="#" type="image/png">
 
   <title>AdminX</title>
@@ -399,8 +399,16 @@
                         </div>
                     </div>
                 </div>
+				<div class="col-md-3">
+					<div class="panel green-box">
+                        <div class="panel-body extra-pad text-center">
+							<button id="sync" class="btn btn-success" style="margin-top:10px">数据同步</button>
+							<span class="sm" style="display:block;margin-top:25px">上一次同步日期:<span id="time">2015-05-05 19:38:15</span></span>
+						</div>
+					</div>
+				</div>
             </div>
-
+	
             <div class="row">
                
 
@@ -582,7 +590,7 @@
 $(".sticky-left-side").load("component.html #leftBar");
 $(".header-section").load("component.html #TopBar");
 $(".sticky-footer").load("component.html #bottomBar");
-</script>>
+</script>
 
 
 <script src="js/jquery.nicescroll.js"></script>
@@ -621,6 +629,7 @@ $(".sticky-footer").load("component.html #bottomBar");
 
 <!--common scripts for all pages-->
 <script src="js/scripts.js"></script>
+<script src="js/controller/index.js"></script>
 
 <!--Dashboard Charts-->
 <!--

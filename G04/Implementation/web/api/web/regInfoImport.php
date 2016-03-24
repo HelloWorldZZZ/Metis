@@ -1,5 +1,5 @@
 <?php
-include_once("./Excel/reader.php");
+	include_once("./Excel/reader.php");
 	$filename=$_FILES["file"]["name"];
 	$dir=$filename;
 	if(!move_uploaded_file($_FILES["file"]["tmp_name"],$dir)){
@@ -11,12 +11,35 @@ include_once("./Excel/reader.php");
 		return;
 	}
 
-	//Ñ­»·¶ÁÈ¡ÉÏ´«µÄ±í¸ñÊý¾Ý²¢²åÈëÊý¾Ý¿â
+	//å¾ªçŽ¯è¯»å–ä¸Šä¼ çš„è¡¨æ ¼æ•°æ®å¹¶æ’å…¥æ•°æ®åº“
 	$data = new Spreadsheet_Excel_Reader();
 	$data->setOutputEncoding('utf-8');
 	$data->read($dir);
-	for ($i = 1; $i <= $data->sheets[0]['numRows']; $i++) {
-		for ($j = 1; $j <= $data->sheets[0]['numCols']; $j++) {
-			echo $param[$j]=$data->sheets[0]['cells'][$i][$j];
-		}
+	for ($j = 1; $j <= $data->sheets[0]['numCols']; $j++) {
+		@$key[]=$data->sheets[0]['cells'][1][$j];
 	}
+	for ($i = 2; $i <= $data->sheets[0]['numRows']; $i++) {
+		for ($j = 1; $j <= $data->sheets[0]['numCols']; $j++) {
+			@$obj[$key[$j-1]]=$data->sheets[0]['cells'][$i][$j];
+		}
+		$group[]=$obj;
+	}
+	echo $data=json_encode($group,JSON_UNESCAPED_UNICODE);
+	// $URL="https://api.weixin.qq.com/cgi-bin/menu/create?access_token=";
+	// $cu = curl_init();
+	// curl_setopt($cu, CURLOPT_URL, $URL);
+	// curl_setopt($cu, CURLOPT_RETURNTRANSFER, 1);
+	// curl_setopt($cu, CURLOPT_SSL_VERIFYPEER, false);    //SSL æŠ¥é”™æ—¶ä½¿ç”¨
+    // curl_setopt($cu, CURLOPT_SSL_VERIFYHOST, false);    //SSL æŠ¥é”™æ—¶ä½¿ç”¨
+	// if (!empty($data)){
+        // curl_setopt($cu, CURLOPT_POST, 1);
+        // curl_setopt($cu, CURLOPT_POSTFIELDS, $data);
+    // }
+	// $response_json = curl_exec($cu);
+	// if ($response_json === FALSE) {
+		// echo "cURL Error: " . curl_error($cu);
+	// }
+	// else
+		// echo $response_json;
+	// curl_close($cu);
+

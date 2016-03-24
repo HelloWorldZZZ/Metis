@@ -3,6 +3,7 @@ package com.metis.rns;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
@@ -27,7 +28,10 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.metis.rns.fragment.FragmentDone;
 import com.metis.rns.fragment.FragmentMark;
+import com.metis.rns.fragment.FragmentSettings;
+import com.metis.rns.fragment.FragmentUpload;
 import com.metis.rns.po.Exam;
 import com.metis.rns.utils.Utils;
 
@@ -57,6 +61,7 @@ public class MainActivity extends ActionBarActivity {
     private FrameLayout frameLayout;
     private ProgressDialog mLoginProgressDialog;
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     private JSONObject mInfoJson;
     private Toolbar mToolbar;
     private Exam mExam;
@@ -101,11 +106,10 @@ public class MainActivity extends ActionBarActivity {
 
         //设置抽屉DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
                 R.string.drawer_open, R.string.drawer_close);
         mDrawerToggle.syncState();//初始化状态
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
         //设置导航栏NavigationView的点击事件
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
     }
@@ -150,19 +154,19 @@ public class MainActivity extends ActionBarActivity {
     private void changViewVisibility(int TYPE) {
         switch (TYPE) {
             case LOGIN_PAGE:
-                mNavigationView.setVisibility(View.GONE);
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
                 mLoginView.setVisibility(View.VISIBLE);
                 mInfoView.setVisibility(View.GONE);
                 frameLayout.setVisibility(View.GONE);
                 break;
             case INFO_PAGE:
-                mNavigationView.setVisibility(View.VISIBLE);
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
                 mLoginView.setVisibility(View.GONE);
                 mInfoView.setVisibility(View.VISIBLE);
                 frameLayout.setVisibility(View.GONE);
                 break;
             case FRAME_PAGE:
-                mNavigationView.setVisibility(View.VISIBLE);
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
                 mLoginView.setVisibility(View.GONE);
                 mInfoView.setVisibility(View.GONE);
                 frameLayout.setVisibility(View.VISIBLE);
@@ -177,7 +181,7 @@ public class MainActivity extends ActionBarActivity {
             ImageView ivPersonImg = (ImageView) findViewById(R.id.drawer_header_person_img);
             if (mRole == IDENTITY_ADMIN) {
                 mNavigationView.setNavigationItemSelectedListener(new AdminNavigationViewListener());
-                String adminName = mInfoJson.getString("admin_account_name");
+                String adminName = mInfoJson.getString("admin_name");
                 tvUserName.setText(adminName);
                 ivPersonImg.setImageResource(R.mipmap.admin);
                 mNavigationView.inflateMenu(R.menu.menu_admin);
@@ -236,7 +240,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void doPost(ArrayList params) {
-        String url = "http://1.metisapi.applinzi.com/appLogin.php";
+        String url = "http://1.metis.applinzi.com/api/app/appLogin.php";
         HttpClient client = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
         HttpResponse response;
@@ -323,7 +327,7 @@ public class MainActivity extends ActionBarActivity {
                 case R.id.mark:
                     changViewVisibility(FRAME_PAGE);
                     getIntent().putExtra("examInfo", mExam);
-                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentMark()).commit();
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new FragmentMark()).commit();
                     mToolbar.setTitle("学生列表");
                     break;
                 case R.id.logout:
@@ -342,16 +346,22 @@ public class MainActivity extends ActionBarActivity {
         public boolean onNavigationItemSelected(MenuItem menuItem) {
             switch (menuItem.getItemId()) {
                 case R.id.setting:
-                    //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentOne()).commit();
+                    changViewVisibility(FRAME_PAGE);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentSettings()).commit();
                     mToolbar.setTitle("设置服务器");
                     break;
-                case R.id.mark:
-                    //getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentOne()).commit();
-                    mToolbar.setTitle("成绩上传");
+                case R.id.upload:
+                    changViewVisibility(FRAME_PAGE);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentUpload()).commit();
+                    mToolbar.setTitle("未上传条目");
+                    break;
+                case R.id.hasUpload:
+                    changViewVisibility(FRAME_PAGE);
+                    getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentDone()).commit();
+                    mToolbar.setTitle("已上传条目");
                     break;
                 case R.id.logout:
-                    mToolbar.setTitle(getString(R.string.app_name));
-                    switchView(false);
+                    showExitDialog();
                     break;
             }
             menuItem.setChecked(true);//点击了把它设为选中状态

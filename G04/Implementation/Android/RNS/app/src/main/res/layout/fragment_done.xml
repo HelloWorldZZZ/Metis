@@ -16,7 +16,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="right|bottom"
         android:layout_margin="20dp"
-        android:src="@mipmap/upload"
+        android:src="@mipmap/clear"
         app:borderWidth="0dp"
         app:backgroundTint="@color/actionbar_color"
         app:elevation="12dp"

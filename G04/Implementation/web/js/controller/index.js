@@ -1,0 +1,12 @@
+$.get("api/web/getSyncTime.php",function(data){
+	console.log(data);
+});
+$(document).ready(function(){
+	$("#sync").click(function(){
+		$("#sync").attr("disabled","disabled");
+		$.get("api/web/dataSync.php",function(data){
+			$("#sync").removeAttr("disabled");
+			console.log(data);
+		});
+	});
+})
