@@ -1,3 +1,14 @@
+document.onreadystatechange = fuck;
+
+function fuck() {
+  if (document.readyState == "interactive")
+    if (!($.cookie('login_status'))) {
+      window.location.assign("login.html");
+    }else{
+      $("body").fadeIn();
+    }
+}
+
 $(".header-section").load("component.html #TopBar");
 $(".sticky-footer").load("component.html #bottomBar");
 $(".sticky-left-side").load("component.html #leftBar",
@@ -193,4 +204,3 @@ $(".sticky-left-side").load("component.html #leftBar",
   }
 
 );
-
