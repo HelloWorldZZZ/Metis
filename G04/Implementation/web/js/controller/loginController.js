@@ -7,7 +7,7 @@ $("button#login").click(function() {
     },
     function(data, status) {
       if (data == 1) {
-        alert($.cookie('the_cookie'));
+        $.cookie('login_status',true);
         window.location.assign("index.html");
       } else {
         $(".alert").fadeIn();
