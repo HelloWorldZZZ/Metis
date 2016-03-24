@@ -50,6 +50,15 @@ hr {
 /*-------------------------------
             LOGIN STYLES
 -------------------------------*/
+#warn{
+    display:none; 
+    width:330px; 
+    margin:0 auto;
+    margin-top:40px;
+    position:absolute;
+    left:50%;
+    margin-left:-165px;
+}
 
 .login-body {
     background: #65cea7 url("../images/login-bg.jpg") no-repeat fixed;
@@ -2247,9 +2256,13 @@ ul.user-states li {
     padding: 10px;
 }
 
+/*
+
 .dataTable tr.odd.gradeA td.sorting_1, .dataTable tr.odd td.sorting_1, .dataTable tr.even.gradeA td.sorting_1 {
     background: none;
 }
+
+*/
 
 .dataTable td.details {
     background-color: #424F63;
@@ -2302,10 +2315,12 @@ ul.user-states li {
     width: 80%;
 }
 
+/*
 .dataTable tr.odd.gradeX td.sorting_1, .dataTable tr.even.gradeX td.sorting_1,
 table.display tr.even.gradeX, table.display tr.gradeX, tr.even.gradeU td.sorting_1, tr.even td.sorting_1, table.display tr.even.gradeC, table.display tr.gradeC, tr.odd.gradeC td.sorting_1, table.display tr.even.gradeU, table.display tr.gradeU, tr.odd.gradeU td.sorting_1 {
     background: none !important;
 }
+*/
 
 /*----------------------------
     EDITABLE TABLE STYLE

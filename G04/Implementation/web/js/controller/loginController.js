@@ -6,11 +6,14 @@ $("button#login").click(function() {
       password: password
     },
     function(data, status) {
-      alert(data);
       if (data == 1) {
+        alert($.cookie('the_cookie'));
         window.location.assign("index.html");
       } else {
-        alert("用户名或密码不正确");
+        $(".alert").fadeIn();
+        setTimeout(function() {
+          $(".alert").fadeOut()
+        }, 1000);
       }
     });
 });
