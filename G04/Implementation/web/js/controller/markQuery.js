@@ -18,5 +18,13 @@ $.get("api/web/getMark.php", function(data) {
       ]);
     }
   }
-  window.localStorage.html = $("#table").html();
+});
+$(document).ready(function(){
+	$("#markUpload").click(function(){
+		$("#markUpload").attr("disabled","disabled");
+		$.get("api/web/uploadMark.php",function(data){
+			$("#markUpload").removeAttr("disabled");
+			alert(data);
+		});
+	});	
 });
