@@ -25,7 +25,8 @@
             android:layout_marginLeft="@dimen/login_page_margin"
             android:layout_marginRight="@dimen/login_page_margin"
             android:layout_weight="1"
-            android:hint="用户名" />
+            android:hint="用户名"
+            android:singleLine="true" />
 
         <EditText
             android:id="@+id/password"
@@ -35,7 +36,8 @@
             android:layout_marginRight="@dimen/login_page_margin"
             android:layout_weight="1"
             android:hint="密码"
-            android:inputType="textPassword" />
+            android:inputType="textPassword"
+            android:singleLine="true" />
 
         <RadioGroup
             android:id="@+id/identity"

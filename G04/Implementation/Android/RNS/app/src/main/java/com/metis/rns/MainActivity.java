@@ -61,6 +61,7 @@ public class MainActivity extends ActionBarActivity {
     private FrameLayout frameLayout;
     private ProgressDialog mLoginProgressDialog;
     private DrawerLayout mDrawerLayout;
+    private ActionBarDrawerToggle mDrawerToggle;
     private JSONObject mInfoJson;
     private Toolbar mToolbar;
     private Exam mExam;
@@ -105,11 +106,10 @@ public class MainActivity extends ActionBarActivity {
 
         //设置抽屉DrawerLayout
         mDrawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
+        mDrawerToggle = new ActionBarDrawerToggle(this, mDrawerLayout, mToolbar,
                 R.string.drawer_open, R.string.drawer_close);
         mDrawerToggle.syncState();//初始化状态
         mDrawerLayout.setDrawerListener(mDrawerToggle);
-
         //设置导航栏NavigationView的点击事件
         mNavigationView = (NavigationView) findViewById(R.id.navigation_view);
     }
@@ -154,19 +154,19 @@ public class MainActivity extends ActionBarActivity {
     private void changViewVisibility(int TYPE) {
         switch (TYPE) {
             case LOGIN_PAGE:
-                mNavigationView.setVisibility(View.GONE);
+                mDrawerToggle.setDrawerIndicatorEnabled(false);
                 mLoginView.setVisibility(View.VISIBLE);
                 mInfoView.setVisibility(View.GONE);
                 frameLayout.setVisibility(View.GONE);
                 break;
             case INFO_PAGE:
-                mNavigationView.setVisibility(View.VISIBLE);
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
                 mLoginView.setVisibility(View.GONE);
                 mInfoView.setVisibility(View.VISIBLE);
                 frameLayout.setVisibility(View.GONE);
                 break;
             case FRAME_PAGE:
-                mNavigationView.setVisibility(View.VISIBLE);
+                mDrawerToggle.setDrawerIndicatorEnabled(true);
                 mLoginView.setVisibility(View.GONE);
                 mInfoView.setVisibility(View.GONE);
                 frameLayout.setVisibility(View.VISIBLE);
