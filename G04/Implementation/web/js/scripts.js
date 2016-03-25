@@ -5,7 +5,8 @@ function fuck() {
     if (!($.cookie('login_status'))) {
       window.location.assign("login.html");
     }else{
-      $("body").fadeIn();
+      $(".displayNone").fadeOut();
+      //$("body").fadeIn();
     }
 }
 

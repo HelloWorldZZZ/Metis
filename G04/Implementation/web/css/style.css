@@ -8,7 +8,9 @@ Author: ThemeBucket
 @import url('bootstrap-reset.css');
 @import url('jquery-ui-1.10.3.css');
 @import url('../fonts/css/font-awesome.min.css');
-
+.displayNone{
+width:1000%;height:1000%;background:white;position:absolute;z-index:10000
+}
 body {
     background: #424f63;
     font-family: 'Open Sans', sans-serif;
