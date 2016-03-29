@@ -1,4 +1,4 @@
-<?php
+﻿<?php
 	include_once("../config.php");
 	$test_list=json_decode(@$_POST["test_list"]);
 	$sql=$c->query("update d_save_status set is_complete=0 where save_type_name='mark'");
