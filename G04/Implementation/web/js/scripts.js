@@ -4,7 +4,7 @@ function fuck() {
   if (document.readyState == "interactive")
     if (!($.cookie('login_status'))) {
       window.location.assign("login.html");
-    }else{
+    } else {
       $(".displayNone").fadeOut();
       //$("body").fadeIn();
     }
@@ -178,6 +178,7 @@ $(".sticky-left-side").load("component.html #leftBar",
     $('.todo-check label').click(function() {
       $(this).parents('li').children('.todo-title').toggleClass('line-through');
     });
+    
 
     $(document).on('click', '.todo-remove', function() {
       $(this).closest("li").remove();
@@ -192,16 +193,10 @@ $(".sticky-left-side").load("component.html #leftBar",
       $(this).parents(".panel").parent().remove();
     });
 
-
-
     // tool tips
-
     $('.tooltips').tooltip();
-
     // popovers
-
     $('.popovers').popover();
-
   }
 
 );
