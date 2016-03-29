@@ -15,4 +15,5 @@
 		}
 	}
 	$sql=$c->query("update d_save_status set is_complete='$status' where save_type_name='mark'");
-	echo $status;
+	$obj["status"]=$status;
+	echo json_encode($obj);

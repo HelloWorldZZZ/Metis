@@ -4,9 +4,9 @@
 	while($result=mysqli_fetch_object($sql))
 		$group[]=$result;
 	$data=json_encode($group,JSON_UNESCAPED_UNICODE);
-	$data="marks=".$data;
-	//echo $data;
-	$URL="";
+	$data="name=zlx&password=123456&marks=".$data;
+	// echo $data;
+	$URL="192.168.1.106:8080/Clemson/school/20/sendMark";
 	$cu = curl_init();
 	curl_setopt($cu, CURLOPT_URL, $URL);
 	curl_setopt($cu, CURLOPT_RETURNTRANSFER, 1);
