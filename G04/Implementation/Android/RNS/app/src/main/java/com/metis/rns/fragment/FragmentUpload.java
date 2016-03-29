@@ -53,8 +53,7 @@ public class FragmentUpload extends Fragment {
     private JSONArray markJson;
     private ArrayList<Mark> markList;
     private boolean needUpload;
-    final private String UPLOAD_SUCCESS = "1";
-    final private String UPLOAD_FAILED = "0";
+    final private int UPLOAD_SUCCESS = 1;
     ArrayList params;
 
     private Thread uploadThread = new Thread(new Runnable() {
@@ -264,11 +263,18 @@ public class FragmentUpload extends Fragment {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String result = data.getString("result");
-            if (result.equals(UPLOAD_SUCCESS)) {
-                clearMarkList();
-                addHasUpList();
-            } else {
-                Toast.makeText(getActivity(), "上传失败,请重新上传", Toast.LENGTH_SHORT).show();
+            try {
+                JSONObject jsonObject = new JSONObject(result);
+                int status = jsonObject.getInt("status");
+                if (status == UPLOAD_SUCCESS) {
+                    clearMarkList();
+                    addHasUpList();
+                    Toast.makeText(getActivity(), "上传成功", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(), "上传失败,请重新上传", Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
     };
