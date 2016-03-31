@@ -1,14 +1,14 @@
 <?php
 	include_once("../config.php");
 
-	$username=@$_POST["username"];$username="shy";
-	$password=@$_POST["password"];$password="123456";
+	$username=@$_POST["username"];//$username="shy";
+	$password=@$_POST["password"];//$password="123456";
 	$role=@$_POST["role"];
 	if($role==1){
 		$query="select admin_name from s_admin where admin_name='$username' and admin_password='$password'";
 		$result=@mysqli_fetch_object($c->query($query));
 		@$result->role=1;	
-		if(@$result->admin_account_name)
+		if(@$result->admin_name)
 			@$result->isLogin=1;
 		else
 			@$result->isLogin=0;
@@ -19,7 +19,7 @@
 	$result=mysqli_fetch_object($c->query($query));
 	if($result){
 		$expert_id=$result->expert_id;
-		$query="select b.test_id,b.class_id,e.class_no,c.subject_id,c.subject_name,d.sub_type_name,a.expert_id,a.expert_name,b.Date from s_expert a,s_test_school_subject_class b,s_subject c,s_sub_type d,s_class e where a.expert_id=$expert_id and a.subject_id=c.subject_id and c.subject_id=b.subject_id and c.sub_type_id=d.sub_type_id and e.class_id=b.class_id";
+		$query="select b.test_id,b.class_id,e.class_no,c.subject_id,c.subject_name,c.subject_max_diff,d.sub_type_name,a.expert_id,a.expert_name,b.Date from s_expert a,s_test_school_subject_class b,s_subject c,s_sub_type d,s_class e where a.expert_id=$expert_id and a.subject_id=c.subject_id and c.subject_id=b.subject_id and c.sub_type_id=d.sub_type_id and e.class_id=b.class_id";
 		$result=@mysqli_fetch_object($c->query($query));
 		$test_id=$result->test_id;
 		$obj=$result;
