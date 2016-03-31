@@ -193,7 +193,9 @@ public class FragmentUpload extends Fragment {
                 JSONObject markItem = markList.getJSONObject(i);
                 sb.append("姓名: ");
                 sb.append(markItem.get("student_name"));
-                sb.append("    成绩: ");
+                sb.append("   印象分: ");
+                sb.append(markItem.get("impression_mark"));
+                sb.append("   最终分: ");
                 sb.append(markItem.get("mark"));
                 sb.append("\n");
             } catch (JSONException e) {
@@ -263,6 +265,7 @@ public class FragmentUpload extends Fragment {
             super.handleMessage(msg);
             Bundle data = msg.getData();
             String result = data.getString("result");
+            result.replace(" ","");
             try {
                 JSONObject jsonObject = new JSONObject(result);
                 int status = jsonObject.getInt("status");

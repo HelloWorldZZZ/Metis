@@ -19,10 +19,11 @@ public class Exam implements Serializable {
     private String expert_name;
     private String date;
     private JSONArray student_list;
+    private int subject_max_diff;
 
     public Exam(String test_id, String class_id, String class_no, String subject_id,
                 String subject_name, String sub_type_name, String expert_id, String expert_name,
-                String date, JSONArray student_list) {
+                String date, JSONArray student_list, int subject_max_diff) {
         this.test_id = test_id;
         this.class_id = class_id;
         this.class_no = class_no;
@@ -33,6 +34,7 @@ public class Exam implements Serializable {
         this.expert_name = expert_name;
         this.date = date;
         this.student_list = student_list;
+        this.subject_max_diff = subject_max_diff;
     }
 
     public String getTest_id() {
@@ -113,5 +115,13 @@ public class Exam implements Serializable {
 
     public void setStudent_list(JSONArray student_list) {
         this.student_list = student_list;
+    }
+
+    public int getSubject_max_diff() {
+        return subject_max_diff;
+    }
+
+    public void setSubject_max_diff(int subject_max_diff) {
+        this.subject_max_diff = subject_max_diff;
     }
 }

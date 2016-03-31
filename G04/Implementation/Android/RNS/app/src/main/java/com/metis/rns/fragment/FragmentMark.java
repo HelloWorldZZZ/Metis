@@ -43,6 +43,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 /**
@@ -59,6 +60,8 @@ public class FragmentMark extends Fragment {
     private SharedPreferences.Editor examEditor;
     private boolean hasImpressMarked = false;
     private boolean hasFinalMarked = false;
+    private boolean onceFinalMarked = false;
+    private int max_mark, min_mark, sub_diff;
 
 
     @Override
@@ -70,7 +73,10 @@ public class FragmentMark extends Fragment {
         examEditor = examPreferences.edit();
         hasImpressMarked = examPreferences.getBoolean("hasImpressMarked", false);
         hasFinalMarked = examPreferences.getBoolean("hasFinalMarked", false);
+        max_mark = examPreferences.getInt("max_mark", 60);
+        min_mark = examPreferences.getInt("min_mark", 60);
         studentJson = mExam.getStudent_list();
+        sub_diff = mExam.getSubject_max_diff();
         studentList = new ArrayList<>();
         initView();
         return mRootView;
@@ -246,8 +252,34 @@ public class FragmentMark extends Fragment {
                             student.setImpress_score(impressScore);
                         } else {
                             int finalScore = finalPicker.getValue();
-                            studentEditor.putInt("finalScore",finalScore);
-                            student.setFinal_score(finalScore);
+                            if (!onceFinalMarked) {
+                                max_mark = finalScore;
+                                min_mark = finalScore;
+                                examEditor.putInt("max_mark", max_mark);
+                                examEditor.putInt("min_mark", min_mark);
+                                examEditor.commit();
+                                studentEditor.putInt("finalScore",finalScore);
+                                student.setFinal_score(finalScore);
+                                onceFinalMarked = true;
+                            } else {
+                                if (Math.abs(max_mark - finalScore) <= sub_diff
+                                        && Math.abs(finalScore - min_mark) <= sub_diff) {
+                                    if(finalScore >= max_mark) {
+                                        max_mark = finalScore;
+                                        examEditor.putInt("max_mark", max_mark);
+                                        examEditor.commit();
+                                    }
+                                    if(finalScore <= min_mark) {
+                                        min_mark = finalScore;
+                                        examEditor.putInt("min_mark", min_mark);
+                                        examEditor.commit();
+                                    }
+                                    studentEditor.putInt("finalScore",finalScore);
+                                    student.setFinal_score(finalScore);
+                                } else {
+                                    Toast.makeText(getActivity(), "与其它同学分数差过大!请重新打分", Toast.LENGTH_SHORT).show();
+                                }
+                            }
                         }
                         studentEditor.commit();
                         myAdapter.notifyDataSetChanged();
@@ -316,7 +348,8 @@ public class FragmentMark extends Fragment {
                 jsonMark.put("enroll_num", student.enroll_num);
                 jsonMark.put("student_name", student.student_name);
                 jsonMark.put("test_temp_id", student.temp_testid);
-                jsonMark.put("mark", student.getImpress_score() + student.getFinal_score());
+                jsonMark.put("impression_mark", student.getImpress_score());
+                jsonMark.put("mark", student.getFinal_score());
                 markList.put(jsonMark);
             }
             examItem.put("markList",markList);
