@@ -223,9 +223,10 @@ public class MainActivity extends ActionBarActivity {
             String expert_id = jsonObject.getString("expert_id");
             String expert_name = jsonObject.getString("expert_name");
             String date = jsonObject.getString("Date");
+            int subject_max_diff = jsonObject.getInt("subject_max_diff");
             JSONArray studentList = jsonObject.getJSONArray("student_list");
             mExam = new Exam(test_id, class_id, class_no, subject_id, subject_name,
-                    sub_type_name, expert_id, expert_name, date, studentList);
+                    sub_type_name, expert_id, expert_name, date, studentList, subject_max_diff);
         } catch (JSONException e) {
             e.printStackTrace();
         }
