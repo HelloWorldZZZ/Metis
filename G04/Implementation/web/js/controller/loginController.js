@@ -12,6 +12,7 @@ document.onkeydown = function(){
      },
      function(data, status) {
        if (data == 1) {
+         $.cookie('username',username);
          $.cookie('login_status', true);
          window.location.assign("index.html");
        } else {
