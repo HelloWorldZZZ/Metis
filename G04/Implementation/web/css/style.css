@@ -8,15 +8,18 @@ Author: ThemeBucket
 @import url('bootstrap-reset.css');
 @import url('jquery-ui-1.10.3.css');
 @import url('../fonts/css/font-awesome.min.css');
+
 .displayNone{
-width:1000%;height:1000%;background:white;position:absolute;z-index:10000
+width:1000%;height:1000%;background:white;position:absolute;z-index:10000;top:-350px;
 }
+
 body {
     background: #424f63;
     font-family: 'Open Sans', sans-serif;
     color: #7a7676;
     line-height: 20px;
     overflow-x: hidden;
+    overflow-y: hidden;
     font-size: 14px;
 }
 
@@ -206,7 +209,7 @@ hr {
 }
 
 .sticky-left-side .custom-nav {
-    margin-top: 50px;
+    margin-top: 90px;
 }
 
 .left-side-collapsed .sticky-left-side {
@@ -215,13 +218,13 @@ hr {
 
 .logo {
     padding-top: 5px;
-    height: 50px;
+    height: 80px;
 }
 
 .logo a {
     font-size: 28px;
     color: #fff;
-    margin: 0 0 0 12px;
+    margin: 10px 0 0 30px;
     text-decoration: none;
     display: inline-block;
 }
@@ -552,6 +555,15 @@ h5.left-nav-title {
 /*----------------------------
         HEADER SECTION
 -----------------------------*/
+
+#TopBar{
+    text-align:center;
+}
+
+#TopBar button {
+   margin:8px 0px;
+}
+
 
 .header-section {
     background: #fff;

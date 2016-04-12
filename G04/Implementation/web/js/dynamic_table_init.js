@@ -65,7 +65,7 @@ $(document).ready(function() {
         }
     });
 
-
+    /*
     var lastIdx = null;
     var table = $('table').DataTable();
     $('tbody')
@@ -79,5 +79,5 @@ $(document).ready(function() {
         .on('mouseleave', function() {
             $(table.cells().nodes()).removeClass('highlighted');
         });
-
+    */
 });

@@ -10,7 +10,60 @@ function fuck() {
     }
 }
 
-$(".header-section").load("component.html #TopBar");
+
+$(".header-section").load("component.html #TopBar", function() {
+  "use strict";
+  // MenuToggle
+
+  $("#aftername").before($.cookie('username'));
+
+  jQuery('.toggle-btn').click(function() {
+    $(".left-side").getNiceScroll().hide();
+
+    if ($('body').hasClass('left-side-collapsed')) {
+      $(".left-side").getNiceScroll().hide();
+    }
+    var body = jQuery('body');
+    var bodyposition = body.css('position');
+
+    if (bodyposition != 'relative') {
+
+      if (!body.hasClass('left-side-collapsed')) {
+        body.addClass('left-side-collapsed');
+        jQuery('.custom-nav ul').attr('style', '');
+
+        jQuery(this).addClass('menu-collapsed');
+
+      } else {
+        body.removeClass('left-side-collapsed chat-view');
+        jQuery('.custom-nav li.active ul').css({
+          display: 'block'
+        });
+
+        jQuery(this).removeClass('menu-collapsed');
+
+      }
+    } else {
+
+      if (body.hasClass('left-side-show'))
+        body.removeClass('left-side-show');
+      else
+        body.addClass('left-side-show');
+
+      mainContentHeightAdjust();
+    }
+
+  });
+
+   //注销登录
+    $(".dropdown-menu-usermenu li a").click(function() {
+      //移除cookie
+      $.cookie("login_status", "",{expires:-1});
+      $.cookie("username", "",{expires:-1});
+      window.location.assign("login.html");
+    });
+
+});
 $(".sticky-footer").load("component.html #bottomBar");
 $(".sticky-left-side").load("component.html #leftBar",
   function() {
@@ -95,45 +148,6 @@ $(".sticky-left-side").load("component.html #leftBar",
     });
 
 
-    // Menu Toggle
-    jQuery('.toggle-btn').click(function() {
-      $(".left-side").getNiceScroll().hide();
-
-      if ($('body').hasClass('left-side-collapsed')) {
-        $(".left-side").getNiceScroll().hide();
-      }
-      var body = jQuery('body');
-      var bodyposition = body.css('position');
-
-      if (bodyposition != 'relative') {
-
-        if (!body.hasClass('left-side-collapsed')) {
-          body.addClass('left-side-collapsed');
-          jQuery('.custom-nav ul').attr('style', '');
-
-          jQuery(this).addClass('menu-collapsed');
-
-        } else {
-          body.removeClass('left-side-collapsed chat-view');
-          jQuery('.custom-nav li.active ul').css({
-            display: 'block'
-          });
-
-          jQuery(this).removeClass('menu-collapsed');
-
-        }
-      } else {
-
-        if (body.hasClass('left-side-show'))
-          body.removeClass('left-side-show');
-        else
-          body.addClass('left-side-show');
-
-        mainContentHeightAdjust();
-      }
-
-    });
-
 
     searchform_reposition();
 
@@ -178,7 +192,7 @@ $(".sticky-left-side").load("component.html #leftBar",
     $('.todo-check label').click(function() {
       $(this).parents('li').children('.todo-title').toggleClass('line-through');
     });
-    
+
 
     $(document).on('click', '.todo-remove', function() {
       $(this).closest("li").remove();
