@@ -14,7 +14,7 @@ document.onkeydown = function(){
        if (data == 1) {
          $.cookie('username',username);
          $.cookie('login_status', true);
-         window.location.assign("index.html");
+         window.location.assign("studentInfo.html");
        } else {
          $(".alert").fadeIn();
          setTimeout(function() {
