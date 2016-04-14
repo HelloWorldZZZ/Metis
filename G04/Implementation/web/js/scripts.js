@@ -9,14 +9,23 @@ function fuck() {
       //$("body").fadeIn();
     }
 }
-
+var syncClick=function(){
+	$("#sync").attr("disabled","disabled");
+	$.get("api/web/dataSync.php",function(data){
+		$("#sync").removeAttr("disabled");
+	})
+}
 
 $(".header-section").load("component.html #TopBar", function() {
   "use strict";
   // MenuToggle
-
   $("#aftername").before($.cookie('username'));
-
+  //获取上次同步时间
+  $.get("api/web/getSyncTime.php",function(data){
+	var json= JSON.parse(data);
+	$("#time").text(json.time);
+  })
+  $("#sync").click(syncClick);
   jQuery('.toggle-btn').click(function() {
     $(".left-side").getNiceScroll().hide();
 
@@ -52,9 +61,7 @@ $(".header-section").load("component.html #TopBar", function() {
 
       mainContentHeightAdjust();
     }
-
   });
-
    //注销登录
     $(".dropdown-menu-usermenu li a").click(function() {
       //移除cookie
