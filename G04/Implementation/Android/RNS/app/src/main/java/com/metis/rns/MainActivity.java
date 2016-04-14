@@ -385,14 +385,8 @@ public class MainActivity extends ActionBarActivity {
         try {
             JSONObject info = new JSONObject(s);
             if (info.getInt("status") == 1) {
-                Intent intent;
-                if (mRole == IDENTITY_ADMIN) {
-                    intent = new Intent(mContext, ExamActivity.class);
-                    intent.putExtra("examInfo", s);
-                } else {
-                    intent = new Intent(mContext, RemarkActivity.class);
-                    intent.putExtra("examInfo", s);
-                }
+                Intent intent = new Intent(mContext, ExamActivity.class);
+                intent.putExtra("examInfo", s);
                 startActivity(intent);
             } else {
                 Toast.makeText(mContext, "复试尚未开始", Toast.LENGTH_SHORT).show();
@@ -414,7 +408,9 @@ public class MainActivity extends ActionBarActivity {
                     mToolbar.setTitle("学生列表");
                     break;
                 case R.id.remark:
-                    getReExamInfo(expertUserName);
+                    Intent intent = new Intent(mContext, RemarkActivity.class);
+                    intent.putExtra("examInfo", mInfoJson.toString());
+                    startActivity(intent);
                     break;
                 case R.id.logout:
                     showExitDialog();

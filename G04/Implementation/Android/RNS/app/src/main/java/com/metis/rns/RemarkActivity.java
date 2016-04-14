@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.metis.rns.po.Exam;
@@ -59,9 +58,6 @@ public class RemarkActivity extends BaseActivity {
             mExam.setSub_type_name(examJson.getString("sub_type_name"));
             mExam.setExpert_id(examJson.getString("expert_id"));
             mExam.setExpert_name(examJson.getString("expert_name"));
-            mExam.setStart_time(examJson.getString("start_time"));
-            mExam.setEnd_time(examJson.getString("end_time"));
-            mExam.setStatus(examJson.getInt("status"));
             mExam.setStudent_list(examJson.getJSONArray("student_list"));
             mStudentMap = new HashMap<>();
             initStudentList(mExam.getStudent_list());
@@ -81,16 +77,6 @@ public class RemarkActivity extends BaseActivity {
                 student.setTest_num(studentJson.getString("test_num"));
                 student.setTemp_testid(studentJson.getString("test_temp_id"));
                 student.setStudent_name(studentJson.getString("student_name"));
-                JSONArray questions = studentJson.getJSONArray("question");
-                HashMap<Integer, Question> questionHashMap = new HashMap<>();
-                for (int j = 0; j < questions.length(); j++) {
-                    JSONObject questionJson = questions.getJSONObject(j);
-                    Question question = new Question(questionJson.getString("question_id"),
-                            questionJson.getString("question_type_id"), questionJson.getString("question_content"));
-                    questionHashMap.put(Integer.parseInt(questionJson.getString("question_type_id")),
-                            question);
-                }
-                student.setQuestionHashMap(questionHashMap);
                 mStudentMap.put(Integer.parseInt(student.getTemp_testid()), student);
             } catch (JSONException e) {
                 e.printStackTrace();
