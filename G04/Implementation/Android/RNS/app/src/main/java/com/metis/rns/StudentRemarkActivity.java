@@ -54,12 +54,12 @@ public class StudentRemarkActivity extends BaseActivity {
             TextView sAnswer3 = (TextView) findViewById(R.id.answer3);
             sName.setText(mStudent.getStudent_name());
             sEnrollName.setText(mStudent.getEnroll_num());
-            sQuestion1.setText(answerJson.getString("en_question"));
-            sQuestion2.setText(answerJson.getString("pro_question"));
-            sQuestion3.setText(answerJson.getString("peo_question"));
-            sAnswer1.setText(answerJson.getString("en_answer"));
-            sAnswer2.setText(answerJson.getString("pro_answer"));
-            sAnswer3.setText(answerJson.getString("peo_answer"));
+            sQuestion1.setText("问题一:" + answerJson.getString("en_question"));
+            sQuestion2.setText("问题二:" + answerJson.getString("pro_question"));
+            sQuestion3.setText("问题三:" + answerJson.getString("peo_question"));
+            sAnswer1.setText("考生答案:" + answerJson.getString("en_answer"));
+            sAnswer2.setText("考生答案:" + answerJson.getString("pro_answer"));
+            sAnswer3.setText("考生答案:" + answerJson.getString("peo_answer"));
             final NumberPicker remark1 = (NumberPicker) findViewById(R.id.remark1);
             final NumberPicker remark2 = (NumberPicker) findViewById(R.id.remark2);
             final NumberPicker remark3 = (NumberPicker) findViewById(R.id.remark3);
