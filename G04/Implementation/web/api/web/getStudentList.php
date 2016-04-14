@@ -35,14 +35,7 @@
 		$sql3=$c->query($query);
 		while($result=mysqli_fetch_object($sql3)){
 			$obj->student_list[]=$result;
-			if($result->mark)
-				$flag=1;
 		}
-		if($flag==0)
-			$retest=0;
-		$flag=0;
 		$group[]=$obj;
 	}
-	@$json->retest=$retest;
-	$json->test_list=$group;
-	echo json_encode($json,JSON_UNESCAPED_UNICODE);
+	echo json_encode($group,JSON_UNESCAPED_UNICODE);

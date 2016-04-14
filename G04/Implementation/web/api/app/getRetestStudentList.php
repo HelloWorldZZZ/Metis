@@ -20,7 +20,7 @@
 				exit();
 			}
 		}
-		$query="select b.test_id,b.class_id,e.class_no,d.sub_type_id,d.sub_type_name,a.expert_id,a.expert_name,b.start_time,b.end_time from s_expert a,s_test b,s_subject c,s_sub_type d,s_class e where a.expert_id=$expert_id and a.subject_id=c.subject_id and c.sub_type_id=d.sub_type_id and e.class_id=b.class_id";
+		$query="select b.test_id,b.retest_classroom_id as class_id,e.class_no,d.sub_type_id,d.sub_type_name,a.expert_id,a.expert_name,b.start_time,b.end_time from s_expert a,t_test_school_retest b,s_subject c,s_sub_type d,s_class e where a.expert_id=$expert_id and a.subject_id=c.subject_id and c.sub_type_id=d.sub_type_id and e.class_id=b.retest_classroom_id";
 		$result=@mysqli_fetch_object($c->query($query));
 		$test_id=$result->test_id;
 		$obj=$result;
