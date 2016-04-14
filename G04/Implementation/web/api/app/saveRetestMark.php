@@ -1,7 +1,7 @@
 ﻿<?php
 	include_once("../config.php");
 	$obj["status"]=0;
-	$retestMark=json_decode(@$_POST["retestMark"]);
+	$retestMark=json_decode(@$_POST["retestMark"],true);
 	if(!$retestMark){
 		$retestMark["retest_en_mark"]=60;
 		$retestMark["retest_pro_mark"]=70;

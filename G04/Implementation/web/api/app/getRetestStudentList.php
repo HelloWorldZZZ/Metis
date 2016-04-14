@@ -37,13 +37,18 @@
 				$question_array[3][]=$question;
 		}
 		while($result=mysqli_fetch_object($sql)){
-			$a=array_rand($question_array[1],1);
-			$result->question[]=$question_array[1][$a];
-			$a=array_rand($question_array[2],1);
-			$result->question[]=$question_array[2][$a];
-			$a=array_rand($question_array[3],1);
-			$result->question[]=$question_array[3][$a];
+			$a1=array_rand($question_array[1],1);
+			$result->question[]=$question_array[1][$a1];
+			$a2=array_rand($question_array[2],1);
+			$result->question[]=$question_array[2][$a2];
+			$a3=array_rand($question_array[3],1);
+			$result->question[]=$question_array[3][$a3];
 			$obj->student_list[]=$result;
+			$q_id1= $question_array[1][$a1]->question_id;
+			$q_id2= $question_array[2][$a2]->question_id;
+			$q_id3= $question_array[3][$a3]->question_id;
+			$c->query("delete from d_answer where enroll_num=$result->enroll_num");
+			$c->query("insert into d_answer values(null,$result->enroll_num,$q_id1,null,$q_id2,null,$q_id3,null)");
 		}
 		echo json_encode($obj,JSON_UNESCAPED_UNICODE);
 	}
