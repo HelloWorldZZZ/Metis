@@ -1,0 +1,24 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.metis.rns.RemarkActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:textSize="18sp"
+        android:gravity="center"
+        android:text="英语类: 满分30,语法通顺则18分以上,酌情打分\n\n专业类: 满分40分,酌情打分\n\n人文类: 满分30分,酌情打分" />
+
+    <Button
+        android:id="@+id/startRemark"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_margin="20dp"
+        android:text="为下一位同学打分"
+        android:layout_weight="1" />
+
+</LinearLayout>

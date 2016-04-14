@@ -4,7 +4,11 @@
         <item
             android:id="@+id/mark"
             android:icon="@mipmap/mark"
-            android:title="打分"></item>
+            android:title="初试打分"></item>
+        <item
+            android:id="@+id/remark"
+            android:icon="@mipmap/mark"
+            android:title="复试打分"></item>
         <item
             android:id="@+id/logout"
             android:icon="@mipmap/logout"

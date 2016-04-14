@@ -3,6 +3,7 @@ package com.metis.rns;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -17,6 +18,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.Toolbar;
 import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -28,6 +30,13 @@ import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.metis.rns.fragment.FragmentDone;
 import com.metis.rns.fragment.FragmentMark;
 import com.metis.rns.fragment.FragmentSettings;
@@ -51,6 +60,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -65,6 +76,7 @@ public class MainActivity extends ActionBarActivity {
     private JSONObject mInfoJson;
     private Toolbar mToolbar;
     private Exam mExam;
+    private String expertUserName;
     private boolean isLogin;
     private int mRole;
     final int IDENTITY_EXPERT = 2;
@@ -131,6 +143,7 @@ public class MainActivity extends ActionBarActivity {
                     int role;
                     if (group.getCheckedRadioButtonId() == R.id.expert) {
                         role = IDENTITY_EXPERT;
+                        expertUserName = username;
                     } else {
                         role = IDENTITY_ADMIN;
                     }
@@ -320,6 +333,75 @@ public class MainActivity extends ActionBarActivity {
         exitDialog.show();
     }
 
+    private void showReExamDialog() {
+        LayoutInflater inflater = LayoutInflater.from(mContext);
+        View markView = inflater.inflate(R.layout.dialog_re_exam, null);
+        final EditText expertName = (EditText) markView.findViewById(R.id.expert_name);
+        AlertDialog reExamDialog = new AlertDialog.Builder(mContext)
+                .setTitle("请输入复试信息")
+                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        String expert_name = expertName.getText().toString();
+                        getReExamInfo(expert_name);
+                    }
+                })
+                .setNegativeButton("取消", null)
+                .setView(markView)
+                .create();
+        reExamDialog.show();
+    }
+
+    private void getReExamInfo(final String expertName) {
+        final ProgressDialog pDialog = ProgressDialog.show(mContext, null, "获取复试信息...", true, true);
+        pDialog.setCancelable(false);
+        String url = "http://metis.applinzi.com/api/app/getRetestStudentList.php";
+        RequestQueue requestQueue = Volley.newRequestQueue(mContext);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String s) {
+                        pDialog.dismiss();
+                        startReExam(s);
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError volleyError) {
+                pDialog.dismiss();
+                Toast.makeText(mContext, "信息获取失败", Toast.LENGTH_SHORT).show();
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("expert_username", expertName);
+                return map;
+            }
+        };
+        requestQueue.add(stringRequest);
+    }
+
+    private void startReExam(String s) {
+        try {
+            JSONObject info = new JSONObject(s);
+            if (info.getInt("status") == 1) {
+                Intent intent;
+                if (mRole == IDENTITY_ADMIN) {
+                    intent = new Intent(mContext, ExamActivity.class);
+                    intent.putExtra("examInfo", s);
+                } else {
+                    intent = new Intent(mContext, RemarkActivity.class);
+                    intent.putExtra("examInfo", s);
+                }
+                startActivity(intent);
+            } else {
+                Toast.makeText(mContext, "复试尚未开始", Toast.LENGTH_SHORT).show();
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+    }
+
     private class ExpertNavigationViewListener implements NavigationView.OnNavigationItemSelectedListener {
 
         @Override
@@ -330,6 +412,9 @@ public class MainActivity extends ActionBarActivity {
                     getIntent().putExtra("examInfo", mExam);
                     getSupportFragmentManager().beginTransaction().replace(R.id.frame_content, new FragmentMark()).commit();
                     mToolbar.setTitle("学生列表");
+                    break;
+                case R.id.remark:
+                    getReExamInfo(expertUserName);
                     break;
                 case R.id.logout:
                     showExitDialog();
@@ -360,6 +445,9 @@ public class MainActivity extends ActionBarActivity {
                     changViewVisibility(FRAME_PAGE);
                     getSupportFragmentManager().beginTransaction().replace(R.id.frame_content,new FragmentDone()).commit();
                     mToolbar.setTitle("已上传条目");
+                    break;
+                case R.id.reExam:
+                    showReExamDialog();
                     break;
                 case R.id.logout:
                     showExitDialog();

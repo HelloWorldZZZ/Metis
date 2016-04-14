@@ -18,8 +18,14 @@ public class Exam implements Serializable {
     private String expert_id;
     private String expert_name;
     private String date;
+    private String start_time;
+    private String end_time;
     private JSONArray student_list;
     private int subject_max_diff;
+    private int status;
+
+    public Exam() {
+    }
 
     public Exam(String test_id, String class_id, String class_no, String subject_id,
                 String subject_name, String sub_type_name, String expert_id, String expert_name,
@@ -123,5 +129,29 @@ public class Exam implements Serializable {
 
     public void setSubject_max_diff(int subject_max_diff) {
         this.subject_max_diff = subject_max_diff;
+    }
+
+    public String getStart_time() {
+        return start_time;
+    }
+
+    public void setStart_time(String start_time) {
+        this.start_time = start_time;
+    }
+
+    public String getEnd_time() {
+        return end_time;
+    }
+
+    public void setEnd_time(String end_time) {
+        this.end_time = end_time;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }
