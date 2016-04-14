@@ -7,7 +7,7 @@
   <meta name="author" content="Sage Zhou">
   <link rel="shortcut icon" href="#" type="image/png">
 
-  <title>考生复试信息</title>
+  <title>成绩查询</title>
 
   <!--dynamic table-->
   <link href="js/advanced-datatable/css/demo_page.css" rel="stylesheet" />
@@ -48,9 +48,18 @@
           <div class="col-sm-12">
             <section class="panel panel-default">
               <header class="panel-heading">
-                考生复试信息
+                考生信息下载
               </header>
               <div class="panel-body">
+                <div class="btn-group">
+                  <button class="btn btn-primary" type="button" id="selector">选择考场</button>
+                  <button data-toggle="dropdown" class="btn btn-primary dropdown-toggle" type="button">
+                    <span class="caret"></span>
+                    <span class="sr-only">Toggle Dropdown</span>
+                  </button>
+                  <ul role="menu" id="classDrop" class="dropdown-menu">
+                  </ul>
+                </div><!-- /btn-group -->
                 <div class="adv-table">
                   <table  class="display table table-bordered" id="dynamic-table">
                     <thead>
@@ -58,6 +67,7 @@
                         <th>考点</th>
                         <th>考场</th>
                         <th>专业</th>
+                        <th>科目</th>
                         <th>姓名</th>
                         <th>准考证号</th>
                         <th>考号</th>
@@ -71,6 +81,7 @@
                         <th>考点</th>
                         <th>考场</th>
                         <th>专业</th>
+                        <th>科目</th>
                         <th>姓名</th>
                         <th>准考证号</th>
                         <th>考号</th>                       
@@ -83,7 +94,7 @@
           </div>
         </div>
         <div class="text-center">
-          <a class="btn btn-primary btn-lg" target="_blank" href="studentInfo_print.html"><i class="fa fa-print"></i> Print </a>
+          <a class="btn btn-success btn-lg"><i class="fa fa-edit"></i> 分配考号</a>
         </div>
       </div>
       <!--body wrapper end-->
@@ -117,7 +128,7 @@
 
   <!--common scripts for all pages-->
   <script src="js/scripts.js"></script>
-  <script src="js/controller/studentRetestInfoController.js"></script>
+  <script src="js/controller/studentInfoController.js"></script>
 
 </body>
 </html>
