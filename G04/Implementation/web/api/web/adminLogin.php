@@ -5,7 +5,7 @@
 	$password=@$_POST["password"];//$password="123456";
 	$login_status=@$_POST["login_status"];//$login_status=1;
 	$c->query("set names UTF8");
-	if($login_status!=1)
+	if(!$login_status)
 		$query="select * from s_admin where admin_name='$username' and admin_password='$password'";
 	else
 		$query="select * from s_admin where admin_name='$_SESSION[username]' and admin_password='$password'";

@@ -58,8 +58,6 @@ $(".header-section").load("component.html #TopBar", function() {
         body.removeClass('left-side-show');
       else
         body.addClass('left-side-show');
-
-      mainContentHeightAdjust();
     }
   });
    //注销登录
