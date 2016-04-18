@@ -228,7 +228,7 @@ public class FragmentUpload extends Fragment {
     }
 
     private void doPost(ArrayList params) {
-        String url = "http://1.metis.applinzi.com/api/app/saveMark.php";
+        String url = "http://metis.applinzi.com/api/app/saveMark.php";
         HttpClient client = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
         HttpResponse response;
