@@ -506,7 +506,8 @@ require.register("dropzone/lib/dropzone.js", function(exports, require, module){
         });
       },
       sending: o.noop,
-      success: function(file) {
+      success: function(file,message) {
+		alert(message);
         return file.previewTemplate.addClass("success");
       },
       complete: o.noop,

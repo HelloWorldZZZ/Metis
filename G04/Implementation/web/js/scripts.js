@@ -12,7 +12,9 @@ function fuck() {
 var syncClick=function(){
 	$("#sync").attr("disabled","disabled");
 	$.get("api/web/dataSync.php",function(data){
+		alert(data)
 		$("#sync").removeAttr("disabled");
+		location.assign(location) 
 	})
 }
 
@@ -25,6 +27,7 @@ $(".header-section").load("component.html #TopBar", function() {
 	var json= JSON.parse(data);
 	$("#time").text(json.time);
   })
+  //数据同步按钮
   $("#sync").click(syncClick);
   jQuery('.toggle-btn').click(function() {
     $(".left-side").getNiceScroll().hide();

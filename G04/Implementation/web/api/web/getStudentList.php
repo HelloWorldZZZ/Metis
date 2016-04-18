@@ -33,7 +33,7 @@
 		//echo json_encode($obj,JSON_UNESCAPED_UNICODE);
 		$query="select a.enroll_num,a.test_num,c.test_temp_id,b.student_name,b.student_sex,b.student_nation,b.student_birthday,b.student_school,c.test_temp_id,c.mark from d_enroll a,s_student b,d_mark c where a.test_id=$test_id and a.student_id=b.student_id and c.enroll_num=a.enroll_num and c.subject_id=$subject_id order by c.test_temp_id";
 		$sql3=$c->query($query);
-		while($result=mysqli_fetch_object($sql3)){
+		while($result=@mysqli_fetch_object($sql3)){
 			$obj->student_list[]=$result;
 		}
 		$group[]=$obj;
