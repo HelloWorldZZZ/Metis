@@ -101,7 +101,7 @@ public class StudentRemarkActivity extends BaseActivity {
     private void uploadRemark(final String remarkString) {
         final ProgressDialog pDialog = ProgressDialog.show(this, null, "提交中...", true, true);
         pDialog.setCancelable(false);
-        String url = "http://metis.applinzi.com/api/app/saveRetestMark.php";
+        String url = getString(R.string.api_url) + "saveRetestMark.php";
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
@@ -132,7 +132,7 @@ public class StudentRemarkActivity extends BaseActivity {
     private void getStudentAnswer() {
         final ProgressDialog pDialog = ProgressDialog.show(this, null, "获取考生答卷...", true, true);
         pDialog.setCancelable(false);
-        String url = "http://metis.applinzi.com/api/app/getAnswer.php";
+        String url = getString(R.string.api_url) + "getAnswer.php";
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {

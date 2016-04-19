@@ -254,7 +254,7 @@ public class MainActivity extends ActionBarActivity {
     }
 
     private void doPost(ArrayList params) {
-        String url = "http://metis.applinzi.com/api/app/appLogin.php";
+        String url = getString(R.string.api_url) + "appLogin.php";
         HttpClient client = new DefaultHttpClient();
         HttpPost httpPost = new HttpPost(url);
         HttpResponse response;
@@ -355,7 +355,7 @@ public class MainActivity extends ActionBarActivity {
     private void getReExamInfo(final String expertName) {
         final ProgressDialog pDialog = ProgressDialog.show(mContext, null, "获取复试信息...", true, true);
         pDialog.setCancelable(false);
-        String url = "http://metis.applinzi.com/api/app/getRetestStudentList.php";
+        String url = getString(R.string.api_url) + "getRetestStudentList.php";
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {

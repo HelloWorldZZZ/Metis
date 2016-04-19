@@ -71,7 +71,7 @@ public class StudentExamActivity extends BaseActivity {
     private void uploadAnswer() {
         final ProgressDialog pDialog = ProgressDialog.show(this, null, "提交中...", true, true);
         pDialog.setCancelable(false);
-        String url = "http://metis.applinzi.com/api/app/saveAnswer.php";
+        String url = getString(R.string.api_url) + "saveAnswer.php";
         RequestQueue requestQueue = Volley.newRequestQueue(mContext);
         StringRequest stringRequest = new StringRequest(Request.Method.POST, url,
                 new Response.Listener<String>() {
