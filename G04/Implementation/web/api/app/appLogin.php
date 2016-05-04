@@ -3,7 +3,7 @@
 
 	$username=@$_POST["username"];//$username="shy";
 	$password=@$_POST["password"];//$password="123456";
-	$role=@$_POST["role"];
+	$role=@$_POST["role"];//$role=2;
 	if($role==1){
 		$query="select admin_name from s_admin where admin_name='$username' and admin_password='$password'";
 		$result=@mysqli_fetch_object($c->query($query));

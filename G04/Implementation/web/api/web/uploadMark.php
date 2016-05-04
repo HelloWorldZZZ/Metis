@@ -11,10 +11,8 @@
 	$json->retest_mark=$group;
 	$data=json_encode($json,JSON_UNESCAPED_UNICODE);
 	$data="name=zlx&password=123456&marks=".$data;
-	echo $data;
-	$URL="192.168.1.112:8080/Clemson/school/20/mark";
 	$cu = curl_init();
-	curl_setopt($cu, CURLOPT_URL, $URL);
+	curl_setopt($cu, CURLOPT_URL, $root_url.$url_mark);
 	curl_setopt($cu, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($cu, CURLOPT_SSL_VERIFYPEER, false);    //SSL 报错时使用
     curl_setopt($cu, CURLOPT_SSL_VERIFYHOST, false);    //SSL 报错时使用

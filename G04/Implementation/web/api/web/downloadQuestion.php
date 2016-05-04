@@ -1,6 +1,5 @@
 <?php
 	include_once("../config.php");
-	header("Content-type: text/html; charset=utf-8"); 
 	$sql=$c->query("select * from d_mark where mark is null");
 	if($result=mysqli_fetch_array($sql)){
 		echo "初试未结束，不能下载复试试题";
@@ -10,9 +9,6 @@
 	$c->query("update d_save_status set is_complete=0 where save_type_name='downloadQuestion'");
 	$status=1;
 	$cu = curl_init();
-	$root_url="http://192.168.1.112:8080/Clemson";
-	$question_url="/school/20/ready/question";
-	$questionType_url="/school/20/ready/questionType";
 	// $data="name=zlx&password=123456";
 	$URL=$root_url.$question_url;
 	curl_setopt($cu, CURLOPT_URL, $URL);
@@ -29,7 +25,7 @@
 		array_pop($item);
 		array_pop($item);
 		$str="('".implode("','",$item)."')";
-		$sql=$c->query("insert into s_question values$str");echo $item["questionContent"]." ";
+		$sql=$c->query("insert into s_question values$str");
 	}
 	$c->query("update d_save_status set is_complete='$status' where save_type_name='downloadQuestion'");
 	curl_close($cu);

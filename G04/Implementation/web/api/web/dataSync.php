@@ -14,15 +14,9 @@
 	$c->query("delete from e_enroll");
 	$c->query("delete from s_test_school_retest");
 	$c->query("delete from d_mark");
+	$c->query("delete from d_answer");
 	$status=1;
 	$cu = curl_init();
-	$root_url="http://192.168.1.112:8080/Clemson";
-	$student_url="/school/20/ready/student";
-	$class_url="/school/20/ready/classroom";
-	$test_url="/school/20/ready/test";
-	$tssc_url="/school/20/ready/testSchoolSubjectClass";
-	$enroll_url="/school/20/ready/enroll";
-	$retest_url="/school/20/ready/testSchoolRetest";
 	// $data="name=zlx&password=123456";
 	$URL=$root_url.$student_url;
 	curl_setopt($cu, CURLOPT_URL, $URL);
@@ -117,9 +111,12 @@
 	}
 	$response=json_decode($response_json,true);
 	foreach($response as $item){
-		array_splice($item,7,26);
-		$str="('".implode("','",$item)."')";  
-		$sql=$c->query("insert into s_test_school_retest values$str");
+		array_pop($item);
+		array_pop($item);
+		array_pop($item);
+		array_pop($item);
+		$str="('".implode("','",$item)."')"; 
+		$sql=$c->query("insert into t_test_school_retest values$str");
 	}
 	$c->query("update d_save_status set is_complete='$status' where save_type_name='dataSync'");
 	curl_close($cu);

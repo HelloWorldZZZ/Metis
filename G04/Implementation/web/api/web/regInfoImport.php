@@ -1,6 +1,6 @@
 ﻿<?php
 	include_once("./Excel/reader.php");
-
+	include_once("../config.php");
 	//循环读取上传的表格数据并插入数据库
 	$data = new Spreadsheet_Excel_Reader();
 	$data->setOutputEncoding('utf-8');
@@ -15,9 +15,8 @@
 		$group[]=$obj;
 	}
 	$data="name=zlx&password=123456&enrolls=".json_encode($group,JSON_UNESCAPED_UNICODE);
-	$URL="http://192.168.1.112:8080/Clemson/school/20/enroll";
 	$cu = curl_init();
-	curl_setopt($cu, CURLOPT_URL, $URL);
+	curl_setopt($cu, CURLOPT_URL, $root_url.$enroll_upload_url);
 	curl_setopt($cu, CURLOPT_RETURNTRANSFER, 1);
 	curl_setopt($cu, CURLOPT_SSL_VERIFYPEER, false);    //SSL 报错时使用
     curl_setopt($cu, CURLOPT_SSL_VERIFYHOST, false);    //SSL 报错时使用
@@ -28,8 +27,9 @@
 	$response_json = curl_exec($cu);
 	if ($response_json === FALSE) {
 		echo "cURL Error: " . curl_error($cu);
+		exit();
 	}
-	else
-		echo $response_json;
+	if($response_json==1)
+		echo "报名表上传成功！";
 	curl_close($cu);
 
